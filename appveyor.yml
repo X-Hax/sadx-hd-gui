@@ -1,0 +1,44 @@
+version: 0.{build}
+
+pull_requests:
+  do_not_increment_build_number: true
+branches:
+  only:
+  - master
+
+skip_tags: true
+
+image: Visual Studio 2017
+platform: x86
+configuration: Release
+clone_depth: 1
+
+cache:
+- C:\HD_DCStyle\system
+- C:\HD_DCStyle\textures
+- C:\mod-manifest-gen.exe
+
+init:
+- ps: mkdir C:\HD_DCStyle
+- ps: Set-Content -Value "Name=HD GUI 2`r`nDescription=High resolution graphics for almost all GUI elements in the game.`r`nAuthor=PkR`r`nVersion=$env:APPVEYOR_BUILD_VERSION`r`nDLLFile=HD_GUI.dll`r`nUpdateUrl=http://dcmods.unreliable.network/owncloud/data/PiKeyAr/files/HD_DCStyle/`r`nChangelogUrl=http://dcmods.unreliable.network/owncloud/data/PiKeyAr/files/HD_DCStyle/HD GUI 2.txt" -Path C:\HD_DCStyle\mod.ini
+- cmd: cinst wget
+- cmd: cd \
+- cmd: wget -np --no-parent -nH --cut-dirs 4 -nc "https://dcmods.unreliable.network/owncloud/data/PiKeyAr/files/Various/mod-manifest-gen.exe"
+- cmd: wget -r -np --no-parent -nH --cut-dirs 4 -nc --reject htm,html,tmp,dll "https://dcmods.unreliable.network/owncloud/data/PiKeyAr/files/HD_DCStyle/"
+- cmd: cd C:\projects\sadx-hd-gui
+
+before_build:
+- cmd: git submodule update --init --recursive
+
+build:
+  project: sadx-hd-gui.sln
+  
+after_build:
+- cmd: copy C:\projects\sadx-hd-gui\Release\HD_GUI.dll C:\HD_DCStyle\HD_GUI.dll
+- ps: $MyProcess = Start-Process "C:\mod-manifest-gen.exe" -Wait -PassThru -ArgumentList "C:\HD_DCStyle"
+- cmd: cd C:\HD_DCStyle
+- cmd: 7z a HD_DCStyle.zip *
+- cmd: move HD_DCStyle.7z C:\projects\sadx-hd-gui\Release\HD_DCStyle.zip
+
+artifacts:
+- path: Release\HD_DCStyle.zip
