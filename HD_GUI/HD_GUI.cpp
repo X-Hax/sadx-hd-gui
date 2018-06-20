@@ -6,12 +6,34 @@
 #include "TutorialStuff.h"
 
 #define ReplacePVMX(a) helperFunctions.ReplaceFile("system\\" a ".PVM", "system\\" a "_HD.PVM")
-#define ReplacePNG(a) do { \
-	_snprintf_s(pathbuf, LengthOfArray(pathbuf), "%s\\textures\\pvr\\index.txt", path); \
+
+#define ReplacePNG_GoalRing(a) do { \
+	_snprintf_s(pathbuf, LengthOfArray(pathbuf), "%s\\textures\\pvr_mission_goalring\\index.txt", path); \
 	helperFunctions.ReplaceFile("system\\" a ".PVR", pathbuf); \
 } while (0)
-#define ReplacePNG_GoalRing(a) do { \
-	_snprintf_s(pathbuf, LengthOfArray(pathbuf), "%s\\textures\\m_goalring\\index.txt", path); \
+
+#define ReplacePNG_Common(a) do { \
+	_snprintf_s(pathbuf, LengthOfArray(pathbuf), "%s\\textures\\pvr_common\\index.txt", path); \
+	helperFunctions.ReplaceFile("system\\" a ".PVR", pathbuf); \
+} while (0)
+
+#define ReplacePNG_MissionE(a) do { \
+	_snprintf_s(pathbuf, LengthOfArray(pathbuf), "%s\\textures\\pvr_mission_en\\index.txt", path); \
+	helperFunctions.ReplaceFile("system\\" a ".PVR", pathbuf); \
+} while (0)
+
+#define ReplacePNG_MissionJ(a) do { \
+	_snprintf_s(pathbuf, LengthOfArray(pathbuf), "%s\\textures\\pvr_mission_jp\\index.txt", path); \
+	helperFunctions.ReplaceFile("system\\" a ".PVR", pathbuf); \
+} while (0)
+
+#define ReplacePNG_StageE(a) do { \
+	_snprintf_s(pathbuf, LengthOfArray(pathbuf), "%s\\textures\\pvr_stage_en\\index.txt", path); \
+	helperFunctions.ReplaceFile("system\\" a ".PVR", pathbuf); \
+} while (0)
+
+#define ReplacePNG_StageJ(a) do { \
+	_snprintf_s(pathbuf, LengthOfArray(pathbuf), "%s\\textures\\pvr_stage_jp\\index.txt", path); \
 	helperFunctions.ReplaceFile("system\\" a ".PVR", pathbuf); \
 } while (0)
 
@@ -146,7 +168,6 @@ extern "C"
 	__declspec(dllexport) void __cdecl Init(const char *path, const HelperFunctions &helperFunctions)
 	{
 		char pathbuf[MAX_PATH];
-
 		HMODULE GoalRing = GetModuleHandle(L"GoalRing");
 		if (helperFunctions.Version < 6)
 		{
@@ -155,7 +176,6 @@ extern "C"
 				L"HD GUI error: Mod loader out of date", MB_OK | MB_ICONERROR);
 			return;
 		}
-
 		//Fix green rectangle in tutorials
 		WriteCall((void*)0x64393E, GreenRect_Wrapper);
 		//Fix random ring icon
@@ -287,224 +307,224 @@ extern "C"
 		ReplacePVMX("SMRYBG_TAILS");
 		ReplacePVMX("TX_CHNAM");
 		ReplacePVMX("TX_CHNAM_E");
-		ReplacePNG("ABC_TXT");
-		ReplacePNG("A_STAGE01");
-		ReplacePNG("A_STAGE01_E");
-		ReplacePNG("A_STAGE02");
-		ReplacePNG("A_STAGE02_E");
-		ReplacePNG("A_STAGE03");
-		ReplacePNG("A_STAGE03_E");
-		ReplacePNG("B32ASCII");
-		ReplacePNG("B32ASCII_J");
-		ReplacePNG("B_STAGE01");
-		ReplacePNG("B_STAGE01_E");
-		ReplacePNG("B_STAGE02");
-		ReplacePNG("B_STAGE02_E");
-		ReplacePNG("B_STAGE03");
-		ReplacePNG("B_STAGE03_E");
-		ReplacePNG("B_STAGE04");
-		ReplacePNG("B_STAGE04_E");
-		ReplacePNG("E_STAGE01");
-		ReplacePNG("E_STAGE01_E");
-		ReplacePNG("E_STAGE02");
-		ReplacePNG("E_STAGE02_E");
-		ReplacePNG("E_STAGE03");
-		ReplacePNG("E_STAGE03_E");
-		ReplacePNG("E_STAGE04");
-		ReplacePNG("E_STAGE04_E");
-		ReplacePNG("E_STAGE05");
-		ReplacePNG("E_STAGE05_E");
-		ReplacePNG("HYOJI_BALLS_E");
-		ReplacePNG("HYOJI_EMBLEM0");
-		ReplacePNG("HYOJI_EMBLEM1");
-		ReplacePNG("K_STAGE01");
-		ReplacePNG("K_STAGE01_E");
-		ReplacePNG("K_STAGE02");
-		ReplacePNG("K_STAGE02_E");
-		ReplacePNG("K_STAGE03");
-		ReplacePNG("K_STAGE03_E");
-		ReplacePNG("K_STAGE04");
-		ReplacePNG("K_STAGE04_E");
-		ReplacePNG("K_STAGE05");
-		ReplacePNG("K_STAGE05_E");
-		ReplacePNG("MISSION_A_AFIN");
-		ReplacePNG("MISSION_A_AHOT");
-		ReplacePNG("MISSION_A_ATWI");
-		ReplacePNG("MISSION_A_BALMIN");
-		ReplacePNG("MISSION_A_BALRING");
-		ReplacePNG("MISSION_A_BALRING_E");
-		ReplacePNG("MISSION_A_BALZERO");
-		ReplacePNG("MISSION_A_BALZERO_E");
-		ReplacePNG("MISSION_A_FIN_E");
-		ReplacePNG("MISSION_A_HOT_E");
-		ReplacePNG("MISSION_A_TWIN_E");
-		ReplacePNG("MISSION_BIG_1K");
-		ReplacePNG("MISSION_BIG_1K_E");
-		ReplacePNG("MISSION_BIG_2K");
-		ReplacePNG("MISSION_BIG_2K_E");
-		ReplacePNG("MISSION_BIG_FROG");
-		ReplacePNG("MISSION_BIG_FROG_E");
-		ReplacePNG("MISSION_G_103");
-		ReplacePNG("MISSION_G_103RING");
-		ReplacePNG("MISSION_G_103RING_E");
-		ReplacePNG("MISSION_G_103SEC");
-		ReplacePNG("MISSION_G_103_E");
-		ReplacePNG("MISSION_G_104");
-		ReplacePNG("MISSION_G_104RING");
-		ReplacePNG("MISSION_G_104RING_E");
-		ReplacePNG("MISSION_G_104_E");
-		ReplacePNG("MISSION_G_105");
-		ReplacePNG("MISSION_G_105RING");
-		ReplacePNG("MISSION_G_105RING_E");
-		ReplacePNG("MISSION_G_105SEC");
-		ReplacePNG("MISSION_G_105_E");
-		ReplacePNG("MISSION_G_AEME");
-		ReplacePNG("MISSION_G_AFIN");
-		ReplacePNG("MISSION_G_AHOT");
-		ReplacePNG("MISSION_G_ARED");
-		ReplacePNG("MISSION_G_AWIN");
-		ReplacePNG("MISSION_G_BEME");
-		ReplacePNG("MISSION_G_BFIN");
-		ReplacePNG("MISSION_G_BHOT");
-		ReplacePNG("MISSION_G_BRED");
-		ReplacePNG("MISSION_G_BWIN");
-		ReplacePNG("MISSION_G_EME_E");
-		ReplacePNG("MISSION_G_FIN_E");
-		ReplacePNG("MISSION_G_FROG");
-		ReplacePNG("MISSION_G_FROGRING");
-		ReplacePNG("MISSION_G_FROGRING_E");
-		ReplacePNG("MISSION_G_FROGSEC");
-		ReplacePNG("MISSION_G_FROG_E");
-		ReplacePNG("MISSION_G_HOT_E");
-		ReplacePNG("MISSION_G_RED_E");
-		ReplacePNG("MISSION_G_SONICD");
-		ReplacePNG("MISSION_G_SONICDRING");
-		ReplacePNG("MISSION_G_SONICDRING_E");
-		ReplacePNG("MISSION_G_SONICDSEC");
-		ReplacePNG("MISSION_G_SONICD_E");
-		ReplacePNG("MISSION_G_WIN_E");
-		ReplacePNG("MISSION_K_1MIN");
-		ReplacePNG("MISSION_K_1MIN_E");
-		ReplacePNG("MISSION_K_2MIN");
-		ReplacePNG("MISSION_K_2MIN_E");
-		ReplacePNG("MISSION_K_3EME");
-		ReplacePNG("MISSION_K_3EME_E");
-		ReplacePNG("MISSION_K_NOHINT");
-		ReplacePNG("MISSION_K_NOHINT_E");
-		ReplacePNG("MISSION_S_2MIN");
-		ReplacePNG("MISSION_S_2MINH");
-		ReplacePNG("MISSION_S_3MIN");
-		ReplacePNG("MISSION_S_4MIN");
-		ReplacePNG("MISSION_S_4MINH");
-		ReplacePNG("MISSION_S_5MIN");
-		ReplacePNG("MISSION_S_BOX");
-		ReplacePNG("MISSION_S_BOXMIN");
-		ReplacePNG("MISSION_S_EGGC");
-		ReplacePNG("MISSION_S_EGGC_E");
-		ReplacePNG("MISSION_S_EMECASINO");
-		ReplacePNG("MISSION_S_EMECASINO_E");
-		ReplacePNG("MISSION_S_EMESNOW");
-		ReplacePNG("MISSION_S_EMESNOW_E");
-		ReplacePNG("MISSION_S_EMEWIND");
-		ReplacePNG("MISSION_S_EMEWIND_E");
-		ReplacePNG("MISSION_S_FEGG");
-		ReplacePNG("MISSION_S_FEGG_E");
-		ReplacePNG("MISSION_S_ISEKI");
-		ReplacePNG("MISSION_S_ISEKI_E");
-		ReplacePNG("MISSION_S_RINGBOX");
-		ReplacePNG("MISSION_S_TAILS");
-		ReplacePNG("MISSION_S_TAILS_E");
-		ReplacePNG("MISSION_T_BOX");
-		ReplacePNG("MISSION_T_EMECASINO");
-		ReplacePNG("MISSION_T_EMECASINO_E");
-		ReplacePNG("MISSION_T_EMESNOW");
-		ReplacePNG("MISSION_T_EMESNOW_E");
-		ReplacePNG("MISSION_T_EMEWIND");
-		ReplacePNG("MISSION_T_EMEWIND_E");
-		ReplacePNG("MISSION_T_FASTEGG");
-		ReplacePNG("MISSION_T_FASTEGG_E");
-		ReplacePNG("MISSION_T_FASTSONIC");
-		ReplacePNG("MISSION_T_FASTSONIC_E");
-		ReplacePNG("MISSION_T_MISS");
-		ReplacePNG("MISSION_T_MISS_E");
-		ReplacePNG("MISSION_T_RINGEGG");
-		ReplacePNG("MISSION_T_RINGEGG_E");
-		ReplacePNG("MISSION_T_RINGSONIC");
-		ReplacePNG("MISSION_T_RINGSONIC_E");
-		ReplacePNG("M_STAGE01");
-		ReplacePNG("M_STAGE01_E");
-		ReplacePNG("M_STAGE02");
-		ReplacePNG("M_STAGE02_E");
-		ReplacePNG("M_STAGE03");
-		ReplacePNG("M_STAGE03_E");
-		ReplacePNG("M_STAGE04");
-		ReplacePNG("M_STAGE04_E");
-		ReplacePNG("M_STAGE05");
-		ReplacePNG("M_STAGE05_E");
-		ReplacePNG("STAFFROLL_TXT");
-		ReplacePNG("ST_064S_LOCKA");
-		ReplacePNG("ST_064S_LOCKB");
-		ReplacePNG("ST_064S_LOCKC");
-		ReplacePNG("ST_064S_SCORE");
-		ReplacePNG("ST_STAGE01");
-		ReplacePNG("ST_STAGE01_E");
-		ReplacePNG("ST_STAGE02");
-		ReplacePNG("ST_STAGE02_E");
-		ReplacePNG("ST_STAGE03");
-		ReplacePNG("ST_STAGE03_E");
-		ReplacePNG("ST_STAGE04");
-		ReplacePNG("ST_STAGE04_E");
-		ReplacePNG("ST_STAGE05");
-		ReplacePNG("ST_STAGE05_E");
-		ReplacePNG("S_STAGE01");
-		ReplacePNG("S_STAGE01_E");
-		ReplacePNG("S_STAGE02");
-		ReplacePNG("S_STAGE02_E");
-		ReplacePNG("S_STAGE03");
-		ReplacePNG("S_STAGE03_E");
-		ReplacePNG("S_STAGE04");
-		ReplacePNG("S_STAGE04_E");
-		ReplacePNG("S_STAGE05");
-		ReplacePNG("S_STAGE05_E");
-		ReplacePNG("S_STAGE06");
-		ReplacePNG("S_STAGE06_E");
-		ReplacePNG("S_STAGE07");
-		ReplacePNG("S_STAGE07_E");
-		ReplacePNG("S_STAGE08");
-		ReplacePNG("S_STAGE08_E");
-		ReplacePNG("S_STAGE09");
-		ReplacePNG("S_STAGE09_E");
-		ReplacePNG("S_STAGE10");
-		ReplacePNG("S_STAGE10_E");
-		ReplacePNG("T_EGGCARRIER");
-		ReplacePNG("T_EGGCARRIER_E");
-		ReplacePNG("T_MISTICRUIN");
-		ReplacePNG("T_MISTICRUIN_E");
-		ReplacePNG("T_STATIONSQUARE");
-		ReplacePNG("T_STATIONSQUARE_E");
+		//Common PVRs
+		ReplacePNG_Common("ABC_TXT");
+		ReplacePNG_Common("HYOJI_BALLS_E");
+		ReplacePNG_Common("HYOJI_EMBLEM0");
+		ReplacePNG_Common("HYOJI_EMBLEM1");
+		ReplacePNG_Common("B32ASCII");
+		ReplacePNG_Common("B32ASCII_J");
+		ReplacePNG_Common("STAFFROLL_TXT");
+		ReplacePNG_Common("ST_064S_LOCKA");
+		ReplacePNG_Common("ST_064S_LOCKB");
+		ReplacePNG_Common("ST_064S_LOCKC");
+		ReplacePNG_Common("ST_064S_SCORE");
+		ReplacePNG_Common("ST_128S_HPGEJI");
+		//English stage PVRs
+		ReplacePNG_StageE("A_STAGE01_E");
+		ReplacePNG_StageE("A_STAGE02_E");
+		ReplacePNG_StageE("A_STAGE03_E");
+		ReplacePNG_StageE("B_STAGE01_E");
+		ReplacePNG_StageE("B_STAGE02_E");
+		ReplacePNG_StageE("B_STAGE03_E");
+		ReplacePNG_StageE("B_STAGE04_E");
+		ReplacePNG_StageE("E_STAGE01_E");
+		ReplacePNG_StageE("E_STAGE02_E");
+		ReplacePNG_StageE("E_STAGE03_E");
+		ReplacePNG_StageE("E_STAGE04_E");
+		ReplacePNG_StageE("E_STAGE05_E");
+		ReplacePNG_StageE("K_STAGE01_E");
+		ReplacePNG_StageE("K_STAGE02_E");
+		ReplacePNG_StageE("K_STAGE03_E");
+		ReplacePNG_StageE("K_STAGE04_E");
+		ReplacePNG_StageE("K_STAGE05_E");
+		ReplacePNG_StageE("M_STAGE01_E");
+		ReplacePNG_StageE("M_STAGE02_E");
+		ReplacePNG_StageE("M_STAGE03_E");
+		ReplacePNG_StageE("M_STAGE04_E");
+		ReplacePNG_StageE("M_STAGE05_E");
+		ReplacePNG_StageE("ST_STAGE01_E");
+		ReplacePNG_StageE("ST_STAGE02_E");
+		ReplacePNG_StageE("ST_STAGE03_E");
+		ReplacePNG_StageE("ST_STAGE04_E");
+		ReplacePNG_StageE("ST_STAGE05_E");
+		ReplacePNG_StageE("S_STAGE01_E");
+		ReplacePNG_StageE("S_STAGE02_E");
+		ReplacePNG_StageE("S_STAGE03_E");
+		ReplacePNG_StageE("S_STAGE04_E");
+		ReplacePNG_StageE("S_STAGE05_E");
+		ReplacePNG_StageE("S_STAGE06_E");
+		ReplacePNG_StageE("S_STAGE07_E");
+		ReplacePNG_StageE("S_STAGE08_E");
+		ReplacePNG_StageE("S_STAGE09_E");
+		ReplacePNG_StageE("S_STAGE10_E");
+		ReplacePNG_StageE("T_EGGCARRIER_E");
+		ReplacePNG_StageE("T_MISTICRUIN_E");
+		ReplacePNG_StageE("T_STATIONSQUARE_E");
+		//Japanese stage PVRs
+		ReplacePNG_StageJ("A_STAGE01");
+		ReplacePNG_StageJ("A_STAGE02");
+		ReplacePNG_StageJ("A_STAGE03");
+		ReplacePNG_StageJ("B_STAGE01");
+		ReplacePNG_StageJ("B_STAGE02");
+		ReplacePNG_StageJ("B_STAGE03");
+		ReplacePNG_StageJ("B_STAGE04");
+		ReplacePNG_StageJ("E_STAGE01");
+		ReplacePNG_StageJ("E_STAGE02");
+		ReplacePNG_StageJ("E_STAGE03");
+		ReplacePNG_StageJ("E_STAGE04");
+		ReplacePNG_StageJ("E_STAGE05");
+		ReplacePNG_StageJ("K_STAGE01");
+		ReplacePNG_StageJ("K_STAGE02");
+		ReplacePNG_StageJ("K_STAGE03");
+		ReplacePNG_StageJ("K_STAGE04");
+		ReplacePNG_StageJ("K_STAGE05");
+		ReplacePNG_StageJ("M_STAGE01");
+		ReplacePNG_StageJ("M_STAGE02");
+		ReplacePNG_StageJ("M_STAGE03");
+		ReplacePNG_StageJ("M_STAGE04");
+		ReplacePNG_StageJ("M_STAGE05");
+		ReplacePNG_StageJ("ST_STAGE01");
+		ReplacePNG_StageJ("ST_STAGE02");
+		ReplacePNG_StageJ("ST_STAGE03");
+		ReplacePNG_StageJ("ST_STAGE04");
+		ReplacePNG_StageJ("ST_STAGE05");
+		ReplacePNG_StageJ("S_STAGE01");
+		ReplacePNG_StageJ("S_STAGE02");
+		ReplacePNG_StageJ("S_STAGE03");
+		ReplacePNG_StageJ("S_STAGE04");
+		ReplacePNG_StageJ("S_STAGE05");
+		ReplacePNG_StageJ("S_STAGE06");
+		ReplacePNG_StageJ("S_STAGE07");
+		ReplacePNG_StageJ("S_STAGE08");
+		ReplacePNG_StageJ("S_STAGE09");
+		ReplacePNG_StageJ("S_STAGE10");
+		ReplacePNG_StageJ("T_EGGCARRIER");
+		ReplacePNG_StageJ("T_MISTICRUIN");
+		ReplacePNG_StageJ("T_STATIONSQUARE");
+		//English mission PVRs
+		ReplacePNG_MissionE("MISSION_A_BALRING_E");
+		ReplacePNG_MissionE("MISSION_A_BALZERO_E");
+		ReplacePNG_MissionE("MISSION_A_FIN_E");
+		ReplacePNG_MissionE("MISSION_A_HOT_E");
+		ReplacePNG_MissionE("MISSION_A_TWIN_E");
+		ReplacePNG_MissionE("MISSION_BIG_1K_E");
+		ReplacePNG_MissionE("MISSION_BIG_2K_E");
+		ReplacePNG_MissionE("MISSION_BIG_FROG_E");
+		ReplacePNG_MissionE("MISSION_G_103RING_E");
+		ReplacePNG_MissionE("MISSION_G_103_E");
+		ReplacePNG_MissionE("MISSION_G_104RING_E");
+		ReplacePNG_MissionE("MISSION_G_104_E");
+		ReplacePNG_MissionE("MISSION_G_105RING_E");
+		ReplacePNG_MissionE("MISSION_G_105_E");
+		ReplacePNG_MissionE("MISSION_G_EME_E");
+		ReplacePNG_MissionE("MISSION_G_FIN_E");
+		ReplacePNG_MissionE("MISSION_G_FROGRING_E");
+		ReplacePNG_MissionE("MISSION_G_FROG_E");
+		ReplacePNG_MissionE("MISSION_G_SONICDRING_E");
+		ReplacePNG_MissionE("MISSION_G_HOT_E");
+		ReplacePNG_MissionE("MISSION_G_RED_E");
+		ReplacePNG_MissionE("MISSION_G_SONICD_E");
+		ReplacePNG_MissionE("MISSION_G_WIN_E");
+		ReplacePNG_MissionE("MISSION_K_1MIN_E");
+		ReplacePNG_MissionE("MISSION_K_2MIN_E");
+		ReplacePNG_MissionE("MISSION_K_3EME_E");
+		ReplacePNG_MissionE("MISSION_K_NOHINT_E");
+		ReplacePNG_MissionE("MISSION_S_EGGC_E");
+		ReplacePNG_MissionE("MISSION_S_EMECASINO_E");
+		ReplacePNG_MissionE("MISSION_S_EMESNOW_E");
+		ReplacePNG_MissionE("MISSION_S_EMEWIND_E");
+		ReplacePNG_MissionE("MISSION_S_FEGG_E");
+		ReplacePNG_MissionE("MISSION_S_ISEKI_E");
+		ReplacePNG_MissionE("MISSION_S_TAILS_E");
+		ReplacePNG_MissionE("MISSION_T_EMECASINO_E");
+		ReplacePNG_MissionE("MISSION_T_EMESNOW_E");
+		ReplacePNG_MissionE("MISSION_T_EMEWIND_E");
+		ReplacePNG_MissionE("MISSION_T_FASTEGG_E");
+		ReplacePNG_MissionE("MISSION_T_FASTSONIC_E");
+		ReplacePNG_MissionE("MISSION_T_MISS_E");
+		ReplacePNG_MissionE("MISSION_T_RINGEGG_E");
+		ReplacePNG_MissionE("MISSION_T_RINGSONIC_E");
+		//Japanese mission PVRs
+		ReplacePNG_MissionJ("MISSION_A_AFIN");
+		ReplacePNG_MissionJ("MISSION_A_AHOT");
+		ReplacePNG_MissionJ("MISSION_A_ATWI");
+		ReplacePNG_MissionJ("MISSION_A_BALMIN");
+		ReplacePNG_MissionJ("MISSION_A_BALRING");
+		ReplacePNG_MissionJ("MISSION_A_BALZERO");
+		ReplacePNG_MissionJ("MISSION_BIG_1K");
+		ReplacePNG_MissionJ("MISSION_BIG_2K");
+		ReplacePNG_MissionJ("MISSION_BIG_FROG");
+		ReplacePNG_MissionJ("MISSION_G_103");
+		ReplacePNG_MissionJ("MISSION_G_103RING");
+		ReplacePNG_MissionJ("MISSION_G_103SEC");
+		ReplacePNG_MissionJ("MISSION_G_104");
+		ReplacePNG_MissionJ("MISSION_G_104RING");
+		ReplacePNG_MissionJ("MISSION_G_105");
+		ReplacePNG_MissionJ("MISSION_G_105RING");
+		ReplacePNG_MissionJ("MISSION_G_105SEC");
+		ReplacePNG_MissionJ("MISSION_G_AEME");
+		ReplacePNG_MissionJ("MISSION_G_AFIN");
+		ReplacePNG_MissionJ("MISSION_G_AHOT");
+		ReplacePNG_MissionJ("MISSION_G_ARED");
+		ReplacePNG_MissionJ("MISSION_G_AWIN");
+		ReplacePNG_MissionJ("MISSION_G_BEME");
+		ReplacePNG_MissionJ("MISSION_G_BFIN");
+		ReplacePNG_MissionJ("MISSION_G_BHOT");
+		ReplacePNG_MissionJ("MISSION_G_BRED");
+		ReplacePNG_MissionJ("MISSION_G_BWIN");
+		ReplacePNG_MissionJ("MISSION_G_FROG");
+		ReplacePNG_MissionJ("MISSION_G_FROGRING");
+		ReplacePNG_MissionJ("MISSION_G_FROGSEC");
+		ReplacePNG_MissionJ("MISSION_G_SONICD");
+		ReplacePNG_MissionJ("MISSION_G_SONICDRING");
+		ReplacePNG_MissionJ("MISSION_G_SONICDSEC");
+		ReplacePNG_MissionJ("MISSION_K_1MIN");
+		ReplacePNG_MissionJ("MISSION_K_2MIN");
+		ReplacePNG_MissionJ("MISSION_K_3EME");
+		ReplacePNG_MissionJ("MISSION_K_NOHINT");
+		ReplacePNG_MissionJ("MISSION_S_BOXMIN");
+		ReplacePNG_MissionJ("MISSION_S_EGGC");
+		ReplacePNG_MissionJ("MISSION_S_EMECASINO");
+		ReplacePNG_MissionJ("MISSION_S_EMESNOW");
+		ReplacePNG_MissionJ("MISSION_S_EMEWIND");
+		ReplacePNG_MissionJ("MISSION_S_FEGG");
+		ReplacePNG_MissionJ("MISSION_S_ISEKI");
+		ReplacePNG_MissionJ("MISSION_S_TAILS");
+		ReplacePNG_MissionJ("MISSION_T_EMECASINO");
+		ReplacePNG_MissionJ("MISSION_T_EMESNOW");
+		ReplacePNG_MissionJ("MISSION_T_EMEWIND");
+		ReplacePNG_MissionJ("MISSION_T_FASTEGG");
+		ReplacePNG_MissionJ("MISSION_T_FASTSONIC");
+		ReplacePNG_MissionJ("MISSION_T_MISS");
+		ReplacePNG_MissionJ("MISSION_T_RINGEGG");
+		ReplacePNG_MissionJ("MISSION_T_RINGSONIC");
 		if (GoalRing == nullptr)
 		{
-			ReplacePNG("MISSION_S_2MIN");
-			ReplacePNG("MISSION_S_2MINH");
-			ReplacePNG("MISSION_S_3MIN");
-			ReplacePNG("MISSION_S_4MIN");
-			ReplacePNG("MISSION_S_4MINH");
-			ReplacePNG("MISSION_S_5MIN");
-			ReplacePNG("MISSION_S_BOX");
-			ReplacePNG("MISSION_S_RINGBOX");
-			ReplacePNG("MISSION_T_BOX");
-			ReplacePNG("MISSION_S_BOX_E");
-			ReplacePNG("MISSION_S_BOX25MIN_E");
-			ReplacePNG("MISSION_S_BOX2MIN_E");
-			ReplacePNG("MISSION_S_BOX3MIN_E");
-			ReplacePNG("MISSION_S_BOX45MIN_E");
-			ReplacePNG("MISSION_S_BOX4MIN_E");
-			ReplacePNG("MISSION_S_BOX5MIN_E");
-			ReplacePNG("MISSION_S_RINGBOX_E");
-			ReplacePNG("MISSION_T_BOX_E");
+			//Japanese
+			ReplacePNG_MissionJ("MISSION_S_2MIN");
+			ReplacePNG_MissionJ("MISSION_S_2MINH");
+			ReplacePNG_MissionJ("MISSION_S_3MIN");
+			ReplacePNG_MissionJ("MISSION_S_4MIN");
+			ReplacePNG_MissionJ("MISSION_S_4MINH");
+			ReplacePNG_MissionJ("MISSION_S_5MIN");
+			ReplacePNG_MissionJ("MISSION_S_BOX");
+			ReplacePNG_MissionJ("MISSION_S_RINGBOX");
+			ReplacePNG_MissionJ("MISSION_T_BOX");
+			//English
+			ReplacePNG_MissionE("MISSION_S_BOX_E");
+			ReplacePNG_MissionE("MISSION_S_BOX25MIN_E");
+			ReplacePNG_MissionE("MISSION_S_BOX2MIN_E");
+			ReplacePNG_MissionE("MISSION_S_BOX3MIN_E");
+			ReplacePNG_MissionE("MISSION_S_BOX45MIN_E");
+			ReplacePNG_MissionE("MISSION_S_BOX4MIN_E");
+			ReplacePNG_MissionE("MISSION_S_BOX5MIN_E");
+			ReplacePNG_MissionE("MISSION_S_RINGBOX_E");
+			ReplacePNG_MissionE("MISSION_T_BOX_E");
 		}
 		else
 		{
+			//Japanese
 			ReplacePNG_GoalRing("MISSION_S_2MIN");
 			ReplacePNG_GoalRing("MISSION_S_2MINH");
 			ReplacePNG_GoalRing("MISSION_S_3MIN");
@@ -514,6 +534,7 @@ extern "C"
 			ReplacePNG_GoalRing("MISSION_S_BOX");
 			ReplacePNG_GoalRing("MISSION_S_RINGBOX");
 			ReplacePNG_GoalRing("MISSION_T_BOX");
+			//English
 			ReplacePNG_GoalRing("MISSION_S_BOX_E");
 			ReplacePNG_GoalRing("MISSION_S_BOX25MIN_E");
 			ReplacePNG_GoalRing("MISSION_S_BOX2MIN_E");
@@ -524,50 +545,6 @@ extern "C"
 			ReplacePNG_GoalRing("MISSION_S_RINGBOX_E");
 			ReplacePNG_GoalRing("MISSION_T_BOX_E");
 		}
-		ReplacePNG("MISSION_S_EGGC_E");
-		ReplacePNG("MISSION_S_EMECASINO_E");
-		ReplacePNG("MISSION_S_EMESNOW_E");
-		ReplacePNG("MISSION_S_EMEWIND_E");
-		ReplacePNG("MISSION_S_FEGG_E");
-		ReplacePNG("MISSION_S_ISEKI_E");
-		ReplacePNG("MISSION_S_TAILS_E");
-		ReplacePNG("MISSION_T_EMECASINO_E");
-		ReplacePNG("MISSION_T_EMESNOW_E");
-		ReplacePNG("MISSION_T_EMEWIND_E");
-		ReplacePNG("MISSION_T_FASTEGG_E");
-		ReplacePNG("MISSION_T_FASTSONIC_E");
-		ReplacePNG("MISSION_T_MISS_E");
-		ReplacePNG("MISSION_T_RINGEGG_E");
-		ReplacePNG("MISSION_T_RINGSONIC_E");
-		ReplacePNG("M_STAGE01_E");
-		ReplacePNG("M_STAGE02_E");
-		ReplacePNG("M_STAGE03_E");
-		ReplacePNG("M_STAGE04_E");
-		ReplacePNG("M_STAGE05_E");
-		ReplacePNG("STAFFROLL_TXT");
-		ReplacePNG("ST_064S_LOCKA");
-		ReplacePNG("ST_064S_LOCKB");
-		ReplacePNG("ST_064S_LOCKC");
-		ReplacePNG("ST_064S_SCORE");
-		ReplacePNG("ST_128S_HPGEJI");
-		ReplacePNG("ST_STAGE01_E");
-		ReplacePNG("ST_STAGE02_E");
-		ReplacePNG("ST_STAGE03_E");
-		ReplacePNG("ST_STAGE04_E");
-		ReplacePNG("ST_STAGE05_E");
-		ReplacePNG("S_STAGE01_E");
-		ReplacePNG("S_STAGE02_E");
-		ReplacePNG("S_STAGE03_E");
-		ReplacePNG("S_STAGE04_E");
-		ReplacePNG("S_STAGE05_E");
-		ReplacePNG("S_STAGE06_E");
-		ReplacePNG("S_STAGE07_E");
-		ReplacePNG("S_STAGE08_E");
-		ReplacePNG("S_STAGE09_E");
-		ReplacePNG("S_STAGE10_E");
-		ReplacePNG("T_EGGCARRIER_E");
-		ReplacePNG("T_MISTICRUIN_E");
-		ReplacePNG("T_STATIONSQUARE_E");
 		//Screen fade fixes
 		f480_Fixed = 1.0f + VerticalResolution;
 		f640_Fixed = 1.0f + HorizontalResolution;
