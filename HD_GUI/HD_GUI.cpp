@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "TutorialStuff.h"
+#include "SubtitleData.h"
+#include <Trampoline.h>
+#include <IniFile.hpp>
 
 #define ReplacePVMX(a) helperFunctions.ReplaceFile("system\\" a ".PVM", "system\\" a "_HD.PVM")
 
@@ -57,6 +60,23 @@ float PadManuXOffset_J = 200.0f;
 float PadManuYOffset = 136.0f;
 float PadManuYOffset2 = 105.0f;
 float PadManuYMultiplier = 1.0f;
+
+//Subtitle/recap stuff
+static char SubtitleString[1024];
+static int SubtitleCharacterCount = 0;
+static float RecapScreenY = 0;
+static int NumberOfRecapLines = 0;
+static int ListenToRecap = 0; //0 - idle, 1 - listen, 2 - done listening
+static float GlobalRecapAlphaForFadeout = 0.0f;
+
+static int SubtitleFontColorR = 255;
+static int SubtitleFontColorG = 255;
+static int SubtitleFontColorB = 255;
+static int RecapFontColorR = 255;
+static int RecapFontColorG = 255;
+static int RecapFontColorB = 255;
+static float RecapSpacing = 5.0f;
+static float SubtitleSpacing = 6.0f;
 
 NJS_TEXANIM RandomRingIconPart_TEXANIM = { 32, 32, 16, 16, 0, 0, 255, 255, 95, 0x20 };
 
@@ -162,6 +182,335 @@ void GreenRect_Wrapper(float x, float y, float z, float width, float height)
 	njTextureShadingMode(2);
 }
 
+//Subtitle stuff
+
+void ParseSubtitle(const char* string)
+{
+	if (GameMode != GameModes_Adventure_Story) //Check if not on recap screen
+	{
+		strcpy_s(SubtitleString, string);
+		SubtitleCharacterCount = strlen(string);
+		for (int i = 0; i < strlen(string); i++)
+		{
+			//PrintDebug("%X ", string[i] & 0xFF);
+			if (string[i] == 0xFFFFFF81)
+			{
+				//Square
+				if (string[i + 1] == 0xFFFFFFA1)
+				{
+					SubtitleString[i] = 0x01;
+					SubtitleString[i + 1] = 0x20;
+				}
+				//...
+				if (string[i + 1] == 0x63)
+				{
+					SubtitleString[i] = 0x00;
+					SubtitleString[i + 1] = 0x20;
+				}
+				//!
+				if (string[i + 1] == 0x49)
+				{
+					SubtitleString[i] = 0x33;
+					SubtitleString[i + 1] = 0x20;
+				}
+				//?
+				if (string[i + 1] == 0x48)
+				{
+					SubtitleString[i] = 0x63;
+					SubtitleString[i + 1] = 0x20;
+				}
+			}
+			else
+			{
+				if (string[max(0, i - 1)] != 0xFFFFFF81) SubtitleString[i] = string[i] & 0xFF;
+			}
+		}
+	}
+	else
+	{
+		if (ListenToRecap == 1)
+		{
+			strcpy_s(SubtitleString, string);
+			for (int i = 0; i < strlen(string); i++)
+			{
+				if (string[i] == 0xFFFFFF81)
+				{
+					//Square
+					if (string[i + 1] == 0xFFFFFFA1)
+					{
+						SubtitleString[i] = 0x01;
+						SubtitleString[i + 1] = 0x20;
+					}
+					//...
+					if (string[i + 1] == 0x63)
+					{
+						SubtitleString[i] = 0x00;
+						SubtitleString[i + 1] = 0x20;
+					}
+					//!
+					if (string[i + 1] == 0x49)
+					{
+						SubtitleString[i] = 0x33;
+						SubtitleString[i + 1] = 0x20;
+					}
+					//?
+					if (string[i + 1] == 0x48)
+					{
+						SubtitleString[i] = 0x63;
+						SubtitleString[i + 1] = 0x20;
+					}
+				}
+				else
+				{
+					if (string[max(0, i - 1)] != 0xFFFFFF81) SubtitleString[i] = string[i] & 0xFF;
+				}
+			}
+			//Add line to recap array
+			NumberOfRecapLines++;
+			strcpy_s(RecapLineArray[NumberOfRecapLines - 1].LineString, SubtitleString);
+			for (int i = 0; i < strlen(SubtitleString); i++)
+			{
+				//Calculate the line's width in pixels (at 1.0x) with character spacing
+				if (SubtitleString[i] != 0x07 && SubtitleString[i] != 0x09)	RecapLineArray[NumberOfRecapLines - 1].LineLength = RecapLineArray[NumberOfRecapLines - 1].LineLength + FontCharacterData[SubtitleString[i]].width + RecapSpacing;
+			}
+		}
+	}
+}
+
+static void DisplaySubtitleThing_r(SubtitleThing *a1, const char *a2);
+static Trampoline DisplaySubtitleThing_t(0x40E570, 0x40E575, DisplaySubtitleThing_r);
+static void __cdecl DisplaySubtitleThing_r(SubtitleThing *a1, const char *a2)
+{
+	/*
+	07 - center
+	09 - tab
+	20 - space
+	0A - line break
+	FFFFFF81 FFFFFFA1 - J square
+	//40D7DA - draw subtitle texture
+	*/
+	auto original = reinterpret_cast<decltype(DisplaySubtitleThing_r)*>(DisplaySubtitleThing_t.Target());
+	original(a1, a2);
+	//PrintDebug("Subtitle: %s\n", a2);
+	ParseSubtitle(a2);
+}
+
+static void DisplayRecapThing_r(ObjectMaster *a1);
+static Trampoline DisplayRecapThing_t(0x642300, 0x642306, DisplayRecapThing_r);
+static void __cdecl DisplayRecapThing_r(ObjectMaster *a1)
+{
+	EntityData1 *SubtitleEntity = a1->Data1;
+	auto original = reinterpret_cast<decltype(DisplayRecapThing_r)*>(DisplayRecapThing_t.Target());
+	original(a1);
+	RecapScreenY = SubtitleEntity->Position.y;
+	//PrintDebug("Ass: %f and %f", SubtitleEntity->Position.x, SubtitleEntity->Position.y);
+}
+
+int FindNewlineCharacter(const char* string)
+{
+	int result = -1;
+	for (unsigned int i = 0; i < strlen(string); i++)
+	{
+		if (string[i] == 0x0A) result = i;
+	}
+	return result;
+}
+
+void BuildFontINI()
+{
+	PrintDebug("\n");
+	PrintDebug("[General]\n");
+	PrintDebug("SubtitleFontColorR=199\n");
+	PrintDebug("SubtitleFontColorG=199\n");
+	PrintDebug("SubtitleFontColorB=217\n");
+	PrintDebug("SubtitleSpacing=6.0\n");
+	PrintDebug("RecapFontColorR=199\n");
+	PrintDebug("RecapFontColorG=199\n");
+	PrintDebug("RecapFontColorB=217\n");
+	PrintDebug("RecapFontColorB=217\n");
+	PrintDebug("RecapSpacing=5.0\n");
+	PrintDebug("\n");
+	for (int i = 0; i < LengthOfArray(FontCharacterData); i++)
+	{
+		PrintDebug("[%d]\n", i);
+		PrintDebug("Width=%d\n", FontCharacterData[i].width);
+		PrintDebug("OffsetX=%d\n", FontCharacterData[i].offset_x);
+		PrintDebug("OffsetY=%d\n", FontCharacterData[i].offset_y);
+		PrintDebug("\n");
+	}
+}
+
+void DrawSubtitleHook(NJS_SPRITE *sp, Int n, Float pri, NJD_SPRITE attr, QueuedModelFlagsB queue_flags)
+{
+	float OldOffsetX = 0;
+	int NewlinePosition = FindNewlineCharacter(SubtitleString);
+	NJS_SPRITE SubtitleCharacterSprite = { { 0, 0, 0 }, 0.4f, 0.4f, 0, &SubtitleTexlist, SubtitleFont };
+	SubtitleCharacterSprite.p.x = sp->p.x;
+	SubtitleCharacterSprite.p.y = sp->p.y;
+	njSetTexture(&SubtitleTexlist);
+	//Set font color
+	SetMaterialAndSpriteColor_Float(GlobalSpriteColor.a, SubtitleFontColorR / 255.0f, SubtitleFontColorG / 255.0f, SubtitleFontColorB / 255.0f);
+	//Draw the whole string if there is no newline character
+	if (NewlinePosition == -1)
+	{
+		//I guess both 0x07 and 0x09 count as centering when it's one line?
+		if (SubtitleString[0] == 0x09 || SubtitleString[0] == 0x07) OldOffsetX = 320.0f - (SubtitleCharacterCount / 2.0f)*32.0f*SubtitleCharacterSprite.sx;
+		//Padding for controls menu
+		else OldOffsetX = 2.0f * (64.0f + SubtitleSpacing)*SubtitleCharacterSprite.sx;
+		for (int i = 0; i < SubtitleCharacterCount; i++)
+		{
+			if (i == 0) SubtitleCharacterSprite.p.x = OldOffsetX;
+			else SubtitleCharacterSprite.p.x = OldOffsetX + SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleString[max(0, i - 1)] & 0xFF].width + SubtitleSpacing + FontCharacterData[SubtitleString[i] & 0xFF].offset_x);
+			SubtitleCharacterSprite.p.y = sp->p.y + SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleString[i] & 0xFF].offset_y);
+			njDrawSprite2D_DrawNow(&SubtitleCharacterSprite, SubtitleString[i] & 0xFF, -1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+			OldOffsetX = SubtitleCharacterSprite.p.x;
+		}
+	}
+	else
+	{
+		//Draw first line
+		//Center if the tab character is found
+		if (SubtitleString[0] == 0x09) OldOffsetX = 320.0f - (NewlinePosition / 2.0f)*32.0f*SubtitleCharacterSprite.sx;
+		//Center by the longer line if the bel character is found OR APPARENTLY IF ANYTHING
+		else //if (SubtitleString[0] == 0x07) 
+		{
+			//Center by the second line
+			if ((SubtitleCharacterCount - NewlinePosition) > NewlinePosition) OldOffsetX = 320.0f - ((SubtitleCharacterCount - NewlinePosition) / 2.0f)*32.0f*SubtitleCharacterSprite.sx;
+			//Center by the first line
+			else OldOffsetX = 320.0f - (NewlinePosition / 2.0f)*32.0f*SubtitleCharacterSprite.sx;
+		}
+		for (int i = 0; i < NewlinePosition; i++)
+		{
+			if (i == 0) SubtitleCharacterSprite.p.x = OldOffsetX;
+			else
+			{
+				SubtitleCharacterSprite.p.x = OldOffsetX + SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleString[max(0, i - 1)] & 0xFF].width + SubtitleSpacing + FontCharacterData[SubtitleString[i] & 0xFF].offset_x);
+			}
+			SubtitleCharacterSprite.p.y = sp->p.y + SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleString[i] & 0xFF].offset_y);
+			njDrawSprite2D_DrawNow(&SubtitleCharacterSprite, SubtitleString[i] & 0xFF, -1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+			OldOffsetX = SubtitleCharacterSprite.p.x;
+		}
+		//Draw second line
+		//Center if the tab character is found
+		if (SubtitleString[NewlinePosition + 1] == 0x09) OldOffsetX = 320.0f - ((SubtitleCharacterCount - NewlinePosition) / 2.0f)*32.0f*SubtitleCharacterSprite.sx;
+		//Center by the longer line if the bel character is found OR APPARENTLY IF ANYTHING
+		else //if (SubtitleString[NewlinePosition + 1] == 0x07 || SubtitleString[0] == 0x07)
+		{
+			//Center by the second line
+			if ((SubtitleCharacterCount - NewlinePosition) > NewlinePosition) OldOffsetX = 320.0f - ((SubtitleCharacterCount - NewlinePosition) / 2.0f)*32.0f*SubtitleCharacterSprite.sx;
+			//Center by the first line
+			else OldOffsetX = 320.0f - (NewlinePosition / 2.0f)*32.0f*SubtitleCharacterSprite.sx;
+		}
+		for (int i = 0; i < SubtitleCharacterCount - NewlinePosition; i++)
+		{
+			if (i == 0) SubtitleCharacterSprite.p.x = OldOffsetX;
+			else
+			{
+				SubtitleCharacterSprite.p.x = OldOffsetX + SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleString[max(0, NewlinePosition + i - 1)] & 0xFF].width + SubtitleSpacing + FontCharacterData[SubtitleString[NewlinePosition + i] & 0xFF].offset_x);
+			}
+			SubtitleCharacterSprite.p.y = sp->p.y + 26 + SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleString[NewlinePosition + i] & 0xFF].offset_y);
+			njDrawSprite2D_DrawNow(&SubtitleCharacterSprite, SubtitleString[NewlinePosition + i] & 0xFF, -1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+			OldOffsetX = SubtitleCharacterSprite.p.x;
+		}
+	}
+}
+
+void LoadFontdata(const IniFile *config)
+{
+	//PrintDebug("\n");
+	SubtitleFontColorR = config->getInt("General", "SubtitleFontColorR", 255);
+	SubtitleFontColorG = config->getInt("General", "SubtitleFontColorG", 255);
+	SubtitleFontColorB = config->getInt("General", "SubtitleFontColorB", 255);
+	SubtitleSpacing = config->getFloat("General", "SubtitleSpacing", 6.0f);
+	RecapFontColorR = config->getInt("General", "RecapFontColorR", 255);
+	RecapFontColorG = config->getInt("General", "RecapFontColorG", 255);
+	RecapFontColorB = config->getInt("General", "RecapFontColorB", 255);
+	RecapSpacing = config->getFloat("General", "RecapSpacing", 6.0f);
+	for (int i = 0; i < LengthOfArray(FontCharacterData); i++)
+	{
+		FontCharacterData[i].width = 32;
+		FontCharacterData[i].offset_x = 0;
+		FontCharacterData[i].offset_y = 0;
+		//PrintDebug("[%d]\n", i);
+		std::string w = std::to_string(i);
+		FontCharacterData[i].width = config->getInt(w, "Width");
+		FontCharacterData[i].offset_x = config->getInt(w, "OffsetX");
+		FontCharacterData[i].offset_y = config->getInt(w, "OffsetY");
+		//PrintDebug("Width=%d\n", FontCharacterData[i].width);
+		//PrintDebug("OffsetX=%d\n", FontCharacterData[i].offset_x);
+		//PrintDebug("OffsetY=%d\n", FontCharacterData[i].offset_y);
+		//PrintDebug("\n");
+	}
+}
+
+void DrawRecapTextHook()
+{
+	/*for (int i = 0; i < NumberOfRecapLines; i++)
+	{
+		PrintDebug("Item%d: %s\n", i, RecapLineArray[i].LineString);
+	}*/
+	float ResolutionScale = (float)VerticalResolution / 480.0f;
+	float FontAlpha = 1.0f;
+	float OldOffsetX = 0;
+	NJS_SPRITE SubtitleCharacterSprite = { { 0, 0, 0 }, 0.4f, 0.4f, 0, &SubtitleTexlist, SubtitleFont };
+	njSetTexture(&SubtitleTexlist);
+	//Set up scaling
+	SubtitleCharacterSprite.sx = 0.4f*ResolutionScale;
+	SubtitleCharacterSprite.sy = 0.4f*ResolutionScale;
+	for (int u = 0; u < NumberOfRecapLines; u++)
+	{
+		//PrintDebug("Length: %i\n", RecapLineArray[u].LineLength);
+		//Calculate centering
+		if (RecapLineArray[u].LineString[0] == 0x07 || RecapLineArray[u].LineString[0] == 0x09) OldOffsetX = ((float)HorizontalResolution/2.0f) - SubtitleCharacterSprite.sx *(RecapLineArray[u].LineLength / 2);
+		else OldOffsetX = 0;
+		for (int i = 0; i < strlen(RecapLineArray[u].LineString); i++)
+		{
+			//Calculate X position
+			if (i == 0) SubtitleCharacterSprite.p.x = OldOffsetX;
+			else SubtitleCharacterSprite.p.x = OldOffsetX + SubtitleCharacterSprite.sx * (FontCharacterData[RecapLineArray[u].LineString[max(0, i - 1)] & 0xFF].width + RecapSpacing + FontCharacterData[RecapLineArray[u].LineString[i] & 0xFF].offset_x);
+			//Calculate Y position
+			SubtitleCharacterSprite.p.y = (u * 40 + 118 + RecapScreenY)*ResolutionScale + SubtitleCharacterSprite.sx * (FontCharacterData[RecapLineArray[u].LineString[i] & 0xFF].offset_y);
+			//Set font color based on Y position
+				if (SubtitleCharacterSprite.p.y <= 180 * ResolutionScale)
+				{
+					FontAlpha = max(0.0f, (SubtitleCharacterSprite.p.y / ResolutionScale - 100.0f) / 80.0f);
+				}
+				else if (SubtitleCharacterSprite.p.y >= 300 * ResolutionScale)
+				{
+					FontAlpha = max(0.0f, (60 + (300.0f - SubtitleCharacterSprite.p.y / ResolutionScale)) / 60.0f);
+				}
+				if (SubtitleCharacterSprite.p.y < 300 * ResolutionScale && SubtitleCharacterSprite.p.y > 180 * ResolutionScale) FontAlpha = 1.0f;
+			SetMaterialAndSpriteColor_Float(max(0, FontAlpha - GlobalRecapAlphaForFadeout), (1.0f - GlobalRecapAlphaForFadeout)*RecapFontColorR/255.0f, (1.0f - GlobalRecapAlphaForFadeout)*RecapFontColorG / 255.0f, (1.0f - GlobalRecapAlphaForFadeout)*RecapFontColorB / 255.0f);
+			//Draw
+			njDrawSprite2D_ForcePriority(&SubtitleCharacterSprite, RecapLineArray[u].LineString[i] & 0xFF, 1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+			OldOffsetX = SubtitleCharacterSprite.p.x;
+		}
+	}	
+}
+
+void RecapStart(SubtitleThing *a1)
+{
+	//PrintDebug("Recap start\n");
+	if (ListenToRecap != 2) ListenToRecap = 1;
+	DoTextThing_Start(a1);
+}
+
+void RecapStop(SubtitleThing *a1)
+{
+	//PrintDebug("Recap stop\n");
+	if (ListenToRecap != 2)
+	{
+		ListenToRecap = 2;
+	}
+	DoTextThing_Stop(a1);
+}
+
+void LoadPVMHook_Recap(const char *filename, NJS_TEXLIST *texlist)
+{
+	LoadPVM(filename, texlist);
+	LoadPVM("SUBTITLE", &SubtitleTexlist);
+}
+
 extern "C"
 {
 	__declspec(dllexport) ModInfo SADXModInfo = { ModLoaderVer };
@@ -169,6 +518,7 @@ extern "C"
 	{
 		char pathbuf[MAX_PATH];
 		HMODULE GoalRing = GetModuleHandle(L"GoalRing");
+		//Warnings
 		if (helperFunctions.Version < 6)
 		{
 			MessageBox(WindowHandle,
@@ -176,6 +526,20 @@ extern "C"
 				L"HD GUI error: Mod loader out of date", MB_OK | MB_ICONERROR);
 			return;
 		}
+		//Subtitle hooks
+		WriteCall((void*)0x40D7DA, DrawSubtitleHook);
+		WriteCall((void*)0x643DBA, LoadPVMHook_Recap);
+		WriteCall((void*)0x642363, RecapStart);
+		WriteCall((void*)0x6423EE, RecapStop);
+		WriteCall((char*)0x642427, DrawRecapTextHook);
+		//Add subtitle texlist to common object textures
+		helperFunctions.RegisterCommonObjectPVM(SubtitlePVMEntry);
+		//Load fontdata settings
+		const std::string s_path(path);
+		const std::string s_config_ini(helperFunctions.GetReplaceablePath("SYSTEM\\fontdata.ini"));
+		const IniFile *const config = new IniFile(s_config_ini);
+		LoadFontdata(config);
+		delete config;
 		//Fix green rectangle in tutorials
 		WriteCall((void*)0x64393E, GreenRect_Wrapper);
 		//Fix random ring icon
@@ -917,8 +1281,14 @@ extern "C"
 		TutoScreenGamma_S[0].BoxX = 230;
 		TutoScreenGamma_S[4].BoxScaleY = 192;
 	}
+
 	__declspec(dllexport) void __cdecl OnFrame()
 	{
+		if (GameMode != GameModes_Adventure_Story) {
+			ListenToRecap = 0;
+			GlobalRecapAlphaForFadeout = 0.0f;
+		}
+		else if (RecapScreenMode == 2 && GlobalRecapAlphaForFadeout < 1.0f) GlobalRecapAlphaForFadeout = min(1.0f, GlobalRecapAlphaForFadeout + 0.05f);
 		if (TextLanguage == 3) PadManuXOffset_General = 230;
 		if (TextLanguage == 4 && GetCharacterSelection() != 4) PadManuXOffset_General = 220;
 		if (TextLanguage == 4 && GetCharacterSelection() == 4) PadManuXOffset_General = 205;
