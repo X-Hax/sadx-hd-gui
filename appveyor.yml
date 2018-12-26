@@ -34,11 +34,11 @@ build:
   project: sadx-hd-gui.sln
   
 after_build:
-- cmd: copy C:\projects\sadx-hd-gui\Release\HD_GUI.dll C:\HD_DCStyle\HD_GUI.dll
+- cmd: copy C:\projects\sadx-hd-gui\bin\HD_GUI.dll C:\HD_DCStyle\HD_GUI.dll
 - ps: $MyProcess = Start-Process "C:\mod-manifest-gen.exe" -Wait -PassThru -ArgumentList "C:\HD_DCStyle"
 - cmd: cd C:\
 - cmd: 7z a HD_DCStyle.7z HD_DCStyle
-- cmd: move HD_DCStyle.7z C:\projects\sadx-hd-gui\Release\HD_DCStyle.7z
+- cmd: move HD_DCStyle.7z C:\projects\sadx-hd-gui\bin\HD_DCStyle.7z
 
 artifacts:
-- path: Release\HD_DCStyle.7z
+- path: bin\HD_DCStyle.7z
