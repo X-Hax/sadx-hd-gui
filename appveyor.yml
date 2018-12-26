@@ -32,6 +32,8 @@ before_build:
 
 build:
   project: sadx-hd-gui.sln
+  project: sadx-mod-loader\SADXModLoader.sln
+  project: sadx-mod-loader\libmodutils.sln
   
 after_build:
 - cmd: copy C:\projects\sadx-hd-gui\bin\HD_GUI.dll C:\HD_DCStyle\HD_GUI.dll
