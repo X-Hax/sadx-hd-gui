@@ -35,7 +35,7 @@ struct FontOffset
 	char offset_y; //Vertical offset
 };
 
-struct RecapLine
+struct TextLine
 {
 	int LineLength;
 	char LineString[256];
@@ -567,7 +567,7 @@ static FontOffset FontCharacterData[] =
 {32, 0, 0}
 };
 
-static RecapLine RecapLineArray[256];
+static TextLine TextLineArray[256];
 
 //Misc
 NJS_TEXNAME SubtitleTexname[1];
