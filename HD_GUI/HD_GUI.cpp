@@ -610,6 +610,25 @@ void LoadPVMHook_Recap(const char *filename, NJS_TEXLIST *texlist)
 	LoadPVM("SUBTITLE", &SubtitleTexlist);
 }
 
+void CopySpriteHook(NJS_SPRITE *a1)
+{
+	a1->sx = a1->sx*(VerticalResolution / 480.0f);
+	a1->sy = a1->sy*(VerticalResolution / 480.0f);
+	CopyToGlobalSprite_ScalePosition(a1);
+}
+
+void FixChaoRaceScaling()
+{
+	WriteData((float*)0x888D0C, (HorizontalResolution / 640.0f));
+	WriteData((float*)0x888D10, (HorizontalResolution / 640.0f));
+	WriteData((float*)0x00750F03, (HorizontalResolution / 640.0f));
+	WriteData((float*)0x00750F0B, (HorizontalResolution / 640.0f));
+	WriteData((float*)0x00751542, (HorizontalResolution / 640.0f));
+	WriteData((float*)0x0075154A, (HorizontalResolution / 640.0f));
+	WriteData((float*)0x888CF0, (HorizontalResolution / 1280.0f));
+	WriteData((float*)0x888CF4, (HorizontalResolution / 1280.0f));
+}
+
 extern "C"
 {
 	__declspec(dllexport) ModInfo SADXModInfo = { ModLoaderVer };
@@ -631,6 +650,9 @@ extern "C"
 		WriteCall((void*)0x642363, RecapStart);
 		WriteCall((void*)0x6423EE, RecapStop);
 		WriteCall((char*)0x642427, DrawRecapTextHook);
+		//Chao Race HUD scaling
+		WriteCall((void*)0x75144B, CopySpriteHook);
+		FixChaoRaceScaling();
 		//Add subtitle texlist to common object textures
 		helperFunctions.RegisterCommonObjectPVM(SubtitlePVMEntry);
 		//Load fontdata settings
@@ -1380,7 +1402,6 @@ extern "C"
 		TutoScreenGamma_S[0].BoxX = 230;
 		TutoScreenGamma_S[4].BoxScaleY = 192;
 	}
-
 	__declspec(dllexport) void __cdecl OnFrame()
 	{
 		if (TextLanguage)
@@ -1403,4 +1424,9 @@ extern "C"
 			Options_ArrowScale = Options_ArrowScale + Options_ArrowScaleAmount;
 		}
 	}
+	__declspec(dllexport) void __cdecl OnRenderDeviceReset()
+	{
+		FixChaoRaceScaling();
+	}
+
 }
