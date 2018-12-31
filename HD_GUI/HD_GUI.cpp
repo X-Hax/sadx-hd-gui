@@ -293,7 +293,7 @@ static void __cdecl DisplaySubtitleThing_r(SubtitleThing *a1, const char *a2)
 	*/
 	auto original = reinterpret_cast<decltype(DisplaySubtitleThing_r)*>(DisplaySubtitleThing_t.Target());
 	original(a1, a2);
-	//PrintDebug("Subtitle: %s\n", a2);
+	PrintDebug("Subtitle: %s\n", a2);
 	if (TextLanguage) ParseSubtitle(a2);
 }
 
@@ -629,6 +629,35 @@ void FixChaoRaceScaling()
 	WriteData((float*)0x888CF4, (HorizontalResolution / 1280.0f));
 }
 
+void DrawSaveDeletedTextHook(NJS_TEXTURE_VTX *points, Int count, Uint32 gbix, Int flag)
+{
+	if (!TextLanguage) njDrawTextureMemList_NoSkippedFrames(points, count, gbix, flag);
+	else
+	{
+		float ResolutionScale = (float)VerticalResolution / 480.0f;
+		float FontAlpha = 1.0f;
+		float OldOffsetX = points[0].x;
+		NJS_SPRITE SubtitleCharacterSprite = { { 0, 0, 0 }, 0.4f, 0.4f, 0, &SubtitleTexlist, SubtitleFont };
+		OldOffsetX = 320.0f - (SubtitleCharacterCount / 2.0f)*32.0f*SubtitleCharacterSprite.sx;
+		njSetTexture(&SubtitleTexlist);
+		//Set up scaling
+		SubtitleCharacterSprite.sx = 0.4f;
+		SubtitleCharacterSprite.sy = 0.4f;
+		for (int i = 0; i < strlen(SubtitleString); i++)
+		{
+			//Calculate X position
+			if (i == 0) SubtitleCharacterSprite.p.x = OldOffsetX;
+			else SubtitleCharacterSprite.p.x = OldOffsetX + SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleString[max(0, i - 1)] & 0xFF].width + SubtitleSpacing + FontCharacterData[SubtitleString[i] & 0xFF].offset_x);
+			//Calculate Y position
+			SubtitleCharacterSprite.p.y = points[0].y;
+			SetMaterialAndSpriteColor_Float(1.0f, 1.0f, 1.0f, 1.0f);
+			//Draw
+			njDrawSprite2D_ForcePriority(&SubtitleCharacterSprite, SubtitleString[i] & 0xFF, 1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+			OldOffsetX = SubtitleCharacterSprite.p.x;
+		}
+	}
+}
+
 extern "C"
 {
 	__declspec(dllexport) ModInfo SADXModInfo = { ModLoaderVer };
@@ -649,7 +678,8 @@ extern "C"
 		WriteCall((void*)0x643DBA, LoadPVMHook_Recap);
 		WriteCall((void*)0x642363, RecapStart);
 		WriteCall((void*)0x6423EE, RecapStop);
-		WriteCall((char*)0x642427, DrawRecapTextHook);
+		WriteCall((void*)0x642427, DrawRecapTextHook);
+		WriteCall((void*)0x421906, DrawSaveDeletedTextHook);
 		//Chao Race HUD scaling
 		WriteCall((void*)0x75144B, CopySpriteHook);
 		FixChaoRaceScaling();
