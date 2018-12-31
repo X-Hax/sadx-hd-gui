@@ -293,7 +293,7 @@ static void __cdecl DisplaySubtitleThing_r(SubtitleThing *a1, const char *a2)
 	*/
 	auto original = reinterpret_cast<decltype(DisplaySubtitleThing_r)*>(DisplaySubtitleThing_t.Target());
 	original(a1, a2);
-	PrintDebug("Subtitle: %s\n", a2);
+	//PrintDebug("Subtitle: %s\n", a2);
 	if (TextLanguage) ParseSubtitle(a2);
 }
 
