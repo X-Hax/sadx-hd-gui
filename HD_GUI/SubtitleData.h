@@ -1,6 +1,13 @@
 #pragma once
 
 //Structs
+struct SubtitleNewlines
+{
+	int Newline1;
+	int Newline2;
+	int Newline3;
+};
+
 struct SubtitleThing
 {
 	char field_0;
