@@ -207,6 +207,12 @@ void ParseSubtitle(const char* string)
 					SubtitleString[i] = 0x00;
 					SubtitleString[i + 1] = 0x20;
 				}
+				//'
+				if (string[i + 1] == 0x65)
+				{
+					SubtitleString[i] = 0x20;
+					SubtitleString[i + 1] = 0x27;
+				}
 				//!
 				if (string[i + 1] == 0x49)
 				{
@@ -248,6 +254,12 @@ void ParseSubtitle(const char* string)
 					{
 						SubtitleString[i] = 0x00;
 						SubtitleString[i + 1] = 0x20;
+					}
+					//'
+					if (string[i + 1] == 0x65)
+					{
+						SubtitleString[i] = 0x20;
+						SubtitleString[i + 1] = 0x27;
 					}
 					//!
 					if (string[i + 1] == 0x49)
