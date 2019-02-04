@@ -651,6 +651,15 @@ void LoadPVMHook_Recap(const char *filename, NJS_TEXLIST *texlist)
 	LoadPVM("SUBTITLE", &SubtitleTexlist);
 }
 
+static void SkyChaseInit_r();
+static Trampoline SkyChaseInit_t(0x6281A0, 0x6281A7, SkyChaseInit_r);
+static void __cdecl SkyChaseInit_r()
+{
+	auto original = reinterpret_cast<decltype(SkyChaseInit_r)*>(SkyChaseInit_t.Target());
+	original();
+	LoadPVM("SUBTITLE", &SubtitleTexlist);
+}
+
 void CopySpriteHook(NJS_SPRITE *a1)
 {
 	a1->sx = a1->sx*(VerticalResolution / 480.0f);
