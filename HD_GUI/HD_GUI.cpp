@@ -188,6 +188,7 @@ void ParseSubtitle(const char* string)
 {
 	if (GameMode != GameModes_Adventure_Story) //Check if not on recap screen
 	{
+		strcpy_s(SubtitleString, "");
 		strcpy_s(SubtitleString, string);
 		SubtitleCharacterCount = strlen(string);
 		for (int i = 0; i < strlen(string); i++)
@@ -631,7 +632,16 @@ void DrawRecapTextHook(NJS_TEXTURE_VTX *points, Int count, Uint32 gbix, Int flag
 void RecapStart(SubtitleThing *a1)
 {
 	//PrintDebug("Recap start\n");
-	if (ListenToRecap != 2) ListenToRecap = 1;
+	if (ListenToRecap != 2)
+	{
+		ListenToRecap = 1;
+		NumberOfTextLines = 0;
+		for (int i = 0; i < LengthOfArray(TextLineArray); i++)
+		{
+			TextLineArray[i].LineLength = 0;
+			strcpy_s(TextLineArray[i].LineString, "");
+		}
+	}
 	DoTextThing_Start(a1);
 }
 
