@@ -68,6 +68,8 @@ static float RecapScreenY = 0;
 static int NumberOfTextLines = 0;
 static int ListenToRecap = 0; //0 - idle, 1 - listen, 2 - done listening
 static float GlobalRecapAlphaForFadeout = 0.0f;
+static float SubtitleShadowX = 1.0f;
+static float SubtitleShadowY = 1.0f;
 
 static int SubtitleFontColorR = 255;
 static int SubtitleFontColorG = 255;
@@ -101,6 +103,41 @@ void FileIcon_Hook(int that_cant_be_right, float Texture_X, float Texture_Y, flo
 	DrawBG(45, Arrow1_X, Arrow1_Y, Texture_Z, Arrow1Scale, Arrow1Scale);
 	DrawBG(46, Arrow2_X, Arrow2_Y, Texture_Z, Arrow2Scale, Arrow2Scale);
 	njTextureShadingMode(2);
+}
+
+void DrawSubtitleLetter(NJS_SPRITE *sprite, Int index)
+{
+	if (SubtitleShadowX != 0 || SubtitleShadowY != 0)
+	{
+		SetMaterialAndSpriteColor_Float(GlobalSpriteColor.a, 0, 0, 0);
+		sprite->p.x += SubtitleShadowX;
+		sprite->p.y += SubtitleShadowY;
+		njDrawSprite2D_DrawNow(sprite, index, -1.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+		sprite->p.x -= SubtitleShadowX;
+		sprite->p.y -= SubtitleShadowY;
+	}
+	SetMaterialAndSpriteColor_Float(GlobalSpriteColor.a, SubtitleFontColorR / 255.0f, SubtitleFontColorG / 255.0f, SubtitleFontColorB / 255.0f);
+	njDrawSprite2D_DrawNow(sprite, index, -1.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+}
+
+void DrawRecapLetter(NJS_SPRITE *sprite, Int index, float YPosition)
+{
+	float FontAlpha = 1.0f;
+	if (YPosition >= 300) FontAlpha = max(0, (50 - (YPosition - 300)) / 50.0f);
+	else if (YPosition <= 100) FontAlpha = max(0, (40 - (100 - YPosition)) / 40.0f);
+	else FontAlpha = 1.0f;
+	//PrintDebug("Y: %f, FA: %f\n", YPosition, FontAlpha);
+	if (SubtitleShadowX != 0 || SubtitleShadowY != 0)
+	{
+		SetMaterialAndSpriteColor_Float(max(0, FontAlpha - GlobalRecapAlphaForFadeout), 0, 0, 0);
+		sprite->p.x += SubtitleShadowX;
+		sprite->p.y += SubtitleShadowY;
+		njDrawSprite2D_ForcePriority(sprite, index, 1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+		sprite->p.x -= SubtitleShadowX;
+		sprite->p.y -= SubtitleShadowY;
+	}
+	SetMaterialAndSpriteColor_Float(max(0, FontAlpha - GlobalRecapAlphaForFadeout), max(0, (1.0f - GlobalRecapAlphaForFadeout)*RecapFontColorR / 255.0f), max(0, (1.0f - GlobalRecapAlphaForFadeout)*RecapFontColorG / 255.0f), max(0, (1.0f - GlobalRecapAlphaForFadeout)*RecapFontColorB / 255.0f));
+	njDrawSprite2D_ForcePriority(sprite, index, 1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 }
 
 void DrawShadow_Hook(int texnum, float x, float y, float z, float scaleX, float scaleY)
@@ -483,7 +520,7 @@ void DrawSubtitleHook(NJS_SPRITE *sp, Int n, Float pri, NJD_SPRITE attr, QueuedM
 			if (i == 0) SubtitleCharacterSprite.p.x = HorizontalOffset_Final;
 			else SubtitleCharacterSprite.p.x = HorizontalOffset_Final + SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleString[max(0, i - 1)] & 0xFF].width + SubtitleSpacing + FontCharacterData[SubtitleString[i] & 0xFF].offset_x);
 			SubtitleCharacterSprite.p.y = sp->p.y + SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleString[i] & 0xFF].offset_y);
-			njDrawSprite2D_DrawNow(&SubtitleCharacterSprite, SubtitleString[i] & 0xFF, -1.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+			DrawSubtitleLetter(&SubtitleCharacterSprite, SubtitleString[i] & 0xFF);
 			HorizontalOffset_Final = SubtitleCharacterSprite.p.x;
 		}
 		//Draw line 2
@@ -503,7 +540,7 @@ void DrawSubtitleHook(NJS_SPRITE *sp, Int n, Float pri, NJD_SPRITE attr, QueuedM
 				if (i == NewlinePosition) SubtitleCharacterSprite.p.x = HorizontalOffset_Final;
 				else SubtitleCharacterSprite.p.x = HorizontalOffset_Final + SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleString[max(0, i - 1)] & 0xFF].width + SubtitleSpacing + FontCharacterData[SubtitleString[i] & 0xFF].offset_x);
 				SubtitleCharacterSprite.p.y = sp->p.y + SubtitleCharacterSprite.sy * 68.0f + SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleString[i] & 0xFF].offset_y);
-				njDrawSprite2D_DrawNow(&SubtitleCharacterSprite, SubtitleString[i] & 0xFF, -1.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+				DrawSubtitleLetter(&SubtitleCharacterSprite, SubtitleString[i] & 0xFF);
 				HorizontalOffset_Final = SubtitleCharacterSprite.p.x;
 			}
 		}
@@ -524,7 +561,7 @@ void DrawSubtitleHook(NJS_SPRITE *sp, Int n, Float pri, NJD_SPRITE attr, QueuedM
 				if (i == NewlinePosition2 + 1) SubtitleCharacterSprite.p.x = HorizontalOffset_Final;
 				else SubtitleCharacterSprite.p.x = HorizontalOffset_Final + SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleString[max(0, i - 1)] & 0xFF].width + SubtitleSpacing + FontCharacterData[SubtitleString[i] & 0xFF].offset_x);
 				SubtitleCharacterSprite.p.y = sp->p.y + SubtitleCharacterSprite.sy * 68.0f * 2 + SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleString[i] & 0xFF].offset_y);
-				njDrawSprite2D_DrawNow(&SubtitleCharacterSprite, SubtitleString[i] & 0xFF, -1.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+				DrawSubtitleLetter(&SubtitleCharacterSprite, SubtitleString[i] & 0xFF);
 				HorizontalOffset_Final = SubtitleCharacterSprite.p.x;
 			}
 		}
@@ -545,7 +582,7 @@ void DrawSubtitleHook(NJS_SPRITE *sp, Int n, Float pri, NJD_SPRITE attr, QueuedM
 				if (i == NewlinePosition3 + 1) SubtitleCharacterSprite.p.x = HorizontalOffset_Final;
 				else SubtitleCharacterSprite.p.x = HorizontalOffset_Final + SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleString[max(0, i - 1)] & 0xFF].width + SubtitleSpacing + FontCharacterData[SubtitleString[i] & 0xFF].offset_x);
 				SubtitleCharacterSprite.p.y = sp->p.y + SubtitleCharacterSprite.sy * 68.0f * 3 + SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleString[i] & 0xFF].offset_y);
-				njDrawSprite2D_DrawNow(&SubtitleCharacterSprite, SubtitleString[i] & 0xFF, -1.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+				DrawSubtitleLetter(&SubtitleCharacterSprite, SubtitleString[i] & 0xFF);
 				HorizontalOffset_Final = SubtitleCharacterSprite.p.x;
 			}
 		}
@@ -563,6 +600,8 @@ void LoadFontdata(const IniFile *config)
 	RecapFontColorG = config->getInt("General", "RecapFontColorG", 255);
 	RecapFontColorB = config->getInt("General", "RecapFontColorB", 255);
 	RecapSpacing = config->getFloat("General", "RecapSpacing", 6.0f);
+	SubtitleShadowX = config->getFloat("General", "ShadowXOffset", 1.0f);
+	SubtitleShadowY = config->getFloat("General", "ShadowYOffset", 1.0f);
 	for (int i = 0; i < LengthOfArray(FontCharacterData); i++)
 	{
 		FontCharacterData[i].width = 32;
@@ -610,19 +649,8 @@ void DrawRecapTextHook(NJS_TEXTURE_VTX *points, Int count, Uint32 gbix, Int flag
 				else SubtitleCharacterSprite.p.x = OldOffsetX + SubtitleCharacterSprite.sx * (FontCharacterData[TextLineArray[u].LineString[max(0, i - 1)] & 0xFF].width + RecapSpacing + FontCharacterData[TextLineArray[u].LineString[i] & 0xFF].offset_x);
 				//Calculate Y position
 				SubtitleCharacterSprite.p.y = (u * 40 + 118 + RecapScreenY)*ResolutionScale + SubtitleCharacterSprite.sx * (FontCharacterData[TextLineArray[u].LineString[i] & 0xFF].offset_y);
-				//Set font color based on Y position
-				if (SubtitleCharacterSprite.p.y - SubtitleCharacterSprite.sx * (FontCharacterData[TextLineArray[u].LineString[i] & 0xFF].offset_y) <= 180 * ResolutionScale)
-				{
-					FontAlpha = max(0.0f, ((SubtitleCharacterSprite.p.y - SubtitleCharacterSprite.sx * (FontCharacterData[TextLineArray[u].LineString[i] & 0xFF].offset_y)) / ResolutionScale - 100.0f) / 80.0f);
-				}
-				else if (SubtitleCharacterSprite.p.y - SubtitleCharacterSprite.sx * (FontCharacterData[TextLineArray[u].LineString[i] & 0xFF].offset_y) >= 300 * ResolutionScale)
-				{
-					FontAlpha = max(0.0f, (60 + (300.0f - (SubtitleCharacterSprite.p.y - SubtitleCharacterSprite.sx * (FontCharacterData[TextLineArray[u].LineString[i] & 0xFF].offset_y)) / ResolutionScale)) / 60.0f);
-				}
-				if (SubtitleCharacterSprite.p.y - SubtitleCharacterSprite.sx * (FontCharacterData[TextLineArray[u].LineString[i] & 0xFF].offset_y) < 300 * ResolutionScale && (SubtitleCharacterSprite.p.y - SubtitleCharacterSprite.sx * (FontCharacterData[TextLineArray[u].LineString[i] & 0xFF].offset_y)) > 180 * ResolutionScale) FontAlpha = 1.0f;
-				SetMaterialAndSpriteColor_Float(max(0, FontAlpha - GlobalRecapAlphaForFadeout), (1.0f - GlobalRecapAlphaForFadeout)*RecapFontColorR / 255.0f, (1.0f - GlobalRecapAlphaForFadeout)*RecapFontColorG / 255.0f, (1.0f - GlobalRecapAlphaForFadeout)*RecapFontColorB / 255.0f);
 				//Draw
-				njDrawSprite2D_ForcePriority(&SubtitleCharacterSprite, TextLineArray[u].LineString[i] & 0xFF, 1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+				DrawRecapLetter(&SubtitleCharacterSprite, TextLineArray[u].LineString[i] & 0xFF, (SubtitleCharacterSprite.p.y - SubtitleCharacterSprite.sx * (FontCharacterData[TextLineArray[u].LineString[i] & 0xFF].offset_y)) / ResolutionScale);
 				OldOffsetX = SubtitleCharacterSprite.p.x;
 			}
 		}
@@ -710,8 +738,18 @@ void DrawSaveDeletedTextHook(NJS_TEXTURE_VTX *points, Int count, Uint32 gbix, In
 			else SubtitleCharacterSprite.p.x = OldOffsetX + SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleString[max(0, i - 1)] & 0xFF].width + SubtitleSpacing + FontCharacterData[SubtitleString[i] & 0xFF].offset_x);
 			//Calculate Y position
 			SubtitleCharacterSprite.p.y = points[0].y;
+			//Draw character shadow
+			if (SubtitleShadowX != 0 || SubtitleShadowY != 0)
+			{
+				SetMaterialAndSpriteColor_Float(1.0f, 0, 0, 0);
+				SubtitleCharacterSprite.p.x += SubtitleShadowX;
+				SubtitleCharacterSprite.p.y += SubtitleShadowY;
+				njDrawSprite2D_ForcePriority(&SubtitleCharacterSprite, SubtitleString[i] & 0xFF, 1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+				SubtitleCharacterSprite.p.x -= SubtitleShadowX;
+				SubtitleCharacterSprite.p.y -= SubtitleShadowY;
+			}
+			//Draw character
 			SetMaterialAndSpriteColor_Float(1.0f, 1.0f, 1.0f, 1.0f);
-			//Draw
 			njDrawSprite2D_ForcePriority(&SubtitleCharacterSprite, SubtitleString[i] & 0xFF, 1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 			OldOffsetX = SubtitleCharacterSprite.p.x;
 		}
