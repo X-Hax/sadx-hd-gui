@@ -414,9 +414,12 @@ float CalculateLineLength_Pixel(int StartChar, int EndChar)
 
 void DrawSubtitleHook(NJS_SPRITE *sp, Int n, Float pri, NJD_SPRITE attr, QueuedModelFlagsB queue_flags)
 {
+	float scaled320 = 320.0f;
+	if (sp->p.x <= 90) scaled320 = 320.0f; else scaled320 = HorizontalResolution / 2.0f;
 	if (!TextLanguage) njDrawSprite2D_Queue(sp, n, pri, attr, queue_flags);
 	else
 	{
+		//PrintDebug("X: %f\n", sp->p.x);
 		float HorizontalOffset_Basic = 0;
 		float HorizontalOffset_Final = 0;
 		int LongestLine = 0;
@@ -510,9 +513,9 @@ void DrawSubtitleHook(NJS_SPRITE *sp, Int n, Float pri, NJD_SPRITE attr, QueuedM
 		if (!MissionScreenState)
 		{
 			//0x09 as the first character centers the line
-			if (SubtitleString[0] == 0x09) HorizontalOffset_Basic = 320.0f - (LineLength_Pixel[0] / 2.0f)*SubtitleCharacterSprite.sx;
+			if (SubtitleString[0] == 0x09) HorizontalOffset_Basic = scaled320 - (LineLength_Pixel[0] / 2.0f)*SubtitleCharacterSprite.sx;
 			//Otherwise (e.g. two lines) center by the longest line
-			else HorizontalOffset_Basic = 320.0f - (LongestLine_Pixel / 2.0f)*SubtitleCharacterSprite.sx;
+			else HorizontalOffset_Basic = scaled320 - (LongestLine_Pixel / 2.0f)*SubtitleCharacterSprite.sx;
 		}
 		HorizontalOffset_Final = HorizontalOffset_Basic;
 		for (int i = 0; i < LineLength[0]; i++)
@@ -530,9 +533,9 @@ void DrawSubtitleHook(NJS_SPRITE *sp, Int n, Float pri, NJD_SPRITE attr, QueuedM
 			if (!MissionScreenState)
 			{
 				//0x09 centers the line independently
-				if (SubtitleString[NewlinePosition + 1] == 0x09) HorizontalOffset_Basic = 320.0f - (LineLength[1] / 2.0f)*32.0f*SubtitleCharacterSprite.sx;
+				if (SubtitleString[NewlinePosition + 1] == 0x09) HorizontalOffset_Basic = scaled320 - (LineLength[1] / 2.0f)*32.0f*SubtitleCharacterSprite.sx;
 				//Otherwise center by the longest line
-				else HorizontalOffset_Basic = 320.0f - (LongestLine_Pixel / 2.0f)*SubtitleCharacterSprite.sx;
+				else HorizontalOffset_Basic = scaled320 - (LongestLine_Pixel / 2.0f)*SubtitleCharacterSprite.sx;
 			}
 			HorizontalOffset_Final = HorizontalOffset_Basic;
 			for (int i = NewlinePosition; i < NewlinePosition + LineLength[1]; i++)
@@ -551,9 +554,9 @@ void DrawSubtitleHook(NJS_SPRITE *sp, Int n, Float pri, NJD_SPRITE attr, QueuedM
 			if (!MissionScreenState)
 			{
 				//0x09 centers the line independently
-				if (SubtitleString[NewlinePosition2 + 1] == 0x09) HorizontalOffset_Basic = 320.0f - (LineLength[2] / 2.0f)*32.0f*SubtitleCharacterSprite.sx;
+				if (SubtitleString[NewlinePosition2 + 1] == 0x09) HorizontalOffset_Basic = scaled320 - (LineLength[2] / 2.0f)*32.0f*SubtitleCharacterSprite.sx;
 				//Otherwise center by the longest line
-				else HorizontalOffset_Basic = 320.0f - (LongestLine_Pixel / 2.0f)*SubtitleCharacterSprite.sx;
+				else HorizontalOffset_Basic = scaled320 - (LongestLine_Pixel / 2.0f)*SubtitleCharacterSprite.sx;
 			}
 			HorizontalOffset_Final = HorizontalOffset_Basic;
 			for (int i = NewlinePosition2 + 1; i < NewlinePosition2 + LineLength[2]; i++)
@@ -572,9 +575,9 @@ void DrawSubtitleHook(NJS_SPRITE *sp, Int n, Float pri, NJD_SPRITE attr, QueuedM
 			if (!MissionScreenState)
 			{
 				//0x09 centers the line independently
-				if (SubtitleString[NewlinePosition3 + 1] == 0x09) HorizontalOffset_Basic = 320.0f - (LineLength[3] / 2.0f)*32.0f*SubtitleCharacterSprite.sx;
+				if (SubtitleString[NewlinePosition3 + 1] == 0x09) HorizontalOffset_Basic = scaled320 - (LineLength[3] / 2.0f)*32.0f*SubtitleCharacterSprite.sx;
 				//Otherwise center by the longest line
-				else HorizontalOffset_Basic = 320.0f - (LongestLine_Pixel / 2.0f)*SubtitleCharacterSprite.sx;
+				else HorizontalOffset_Basic = scaled320 - (LongestLine_Pixel / 2.0f)*SubtitleCharacterSprite.sx;
 			}
 			HorizontalOffset_Final = HorizontalOffset_Basic;
 			for (int i = NewlinePosition3 + 1; i < NewlinePosition3 + LineLength[3]; i++)
@@ -719,6 +722,9 @@ void FixChaoRaceScaling()
 
 void DrawSaveDeletedTextHook(NJS_TEXTURE_VTX *points, Int count, Uint32 gbix, Int flag)
 {
+	//PrintDebug("XP: %f\n", points->x);
+	float scaled320 = 320.0f;
+	if (points->x <= 60) scaled320 = 320.0f; else scaled320 = HorizontalResolution / 2.0f;
 	if (!TextLanguage) njDrawTextureMemList_NoSkippedFrames(points, count, gbix, flag);
 	else
 	{
@@ -726,7 +732,7 @@ void DrawSaveDeletedTextHook(NJS_TEXTURE_VTX *points, Int count, Uint32 gbix, In
 		float FontAlpha = 1.0f;
 		float OldOffsetX = points[0].x;
 		NJS_SPRITE SubtitleCharacterSprite = { { 0, 0, 0 }, 0.4f, 0.4f, 0, &SubtitleTexlist, SubtitleFont };
-		OldOffsetX = 320.0f - (SubtitleCharacterCount / 2.0f)*32.0f*SubtitleCharacterSprite.sx;
+		OldOffsetX = scaled320 - (SubtitleCharacterCount / 2.0f)*32.0f*SubtitleCharacterSprite.sx;
 		njSetTexture(&SubtitleTexlist);
 		//Set up scaling
 		SubtitleCharacterSprite.sx = 0.4f;
