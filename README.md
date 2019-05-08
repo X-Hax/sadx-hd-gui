@@ -8,7 +8,7 @@ To install HD GUI 2 you can use SADX Mod Installer that sets up SADX Mod Loader 
 
 Alternatively you could install HD GUI 2 manually by downloading the latest AppVeyor development build from the link below.
 
-**Latest development build:** https://ci.appveyor.com/api/projects/PiKeyAr/sadx-hd-gui/artifacts/Release/HD_DCStyle.7z
+**Latest development build:** https://ci.appveyor.com/api/projects/PiKeyAr/sadx-hd-gui/artifacts/bin/HD_DCStyle.7z
 
 Developer's Twitter: https://twitter.com/pkr_sadx
 
