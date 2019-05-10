@@ -701,6 +701,15 @@ static void __cdecl SkyChaseInit_r()
 	LoadPVM("SUBTITLE", &SubtitleTexlist);
 }
 
+static void UnlockEmblemCountShitr(ObjectMaster *a1);
+static Trampoline UnlockEmblemCountShitt(0x4B55B0, 0x4B55B6, UnlockEmblemCountShitr);
+static void __cdecl UnlockEmblemCountShitr(ObjectMaster *a1)
+{
+	auto original = reinterpret_cast<decltype(UnlockEmblemCountShitr)*>(UnlockEmblemCountShitt.Target());
+	original(a1);
+	LoadPVM("SUBTITLE", &SubtitleTexlist);
+}
+
 void CopySpriteHook(NJS_SPRITE *a1)
 {
 	a1->sx = a1->sx*(VerticalResolution / 480.0f);
