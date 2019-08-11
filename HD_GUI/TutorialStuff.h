@@ -1,6 +1,6 @@
 #pragma once
 
-struct TutorialScreenData
+struct TutorialScreenDataX
 {
 	__int16 BoxX;
 	__int16 BoxY;
@@ -12,7 +12,7 @@ struct TutorialScreenData
 	void *Pointer2;
 };
 
-struct TutorialScreenItem
+struct TutorialScreenItemX
 {
 	char TexID;
 	char unknown;
@@ -21,54 +21,54 @@ struct TutorialScreenItem
 };
 
 //Tutorial screens
-DataArray(TutorialScreenData, TutoScreenSonic_E, 0x2BC3C30, 7);
-DataArray(TutorialScreenData, TutoScreenSonic_J, 0x2BC3BA0, 7);
-DataArray(TutorialScreenData, TutoScreenSonic_F, 0x2BC3CC0, 7);
-DataArray(TutorialScreenData, TutoScreenSonic_G, 0x2BC3DE0, 7);
-DataArray(TutorialScreenData, TutoScreenSonic_S, 0x2BC3D50, 7);
-DataArray(TutorialScreenData, TutoScreenTails_E, 0x2BC4018, 7);
-DataArray(TutorialScreenData, TutoScreenTails_J, 0x2BC3F78, 7);
-DataArray(TutorialScreenData, TutoScreenTails_F, 0x2BC40A8, 7);
-DataArray(TutorialScreenData, TutoScreenTails_S, 0x2BC4138, 7);
-DataArray(TutorialScreenData, TutoScreenTails_G, 0x2BC41C8, 7);
-DataArray(TutorialScreenData, TutoScreenKnuckles_E, 0x2BC4450, 7);
-DataArray(TutorialScreenData, TutoScreenKnuckles_J, 0x2BC4398, 7);
-DataArray(TutorialScreenData, TutoScreenKnuckles_F, 0x2BC44F0, 7);
-DataArray(TutorialScreenData, TutoScreenKnuckles_G, 0x2BC4630, 7);
-DataArray(TutorialScreenData, TutoScreenKnuckles_S, 0x2BC4590, 7);
-DataArray(TutorialScreenData, TutoScreenAmy_E, 0x2BC4830, 7);
-DataArray(TutorialScreenData, TutoScreenAmy_J, 0x2BC47A0, 7);
-DataArray(TutorialScreenData, TutoScreenAmy_F, 0x2BC48C0, 7);
-DataArray(TutorialScreenData, TutoScreenAmy_G, 0x2BC49E0, 7);
-DataArray(TutorialScreenData, TutoScreenAmy_S, 0x2BC4950, 7);
-DataArray(TutorialScreenData, TutoScreenBig_E, 0x2BC5158, 9);
-DataArray(TutorialScreenData, TutoScreenBig_J, 0x2BC5090, 10);
-DataArray(TutorialScreenData, TutoScreenBig_F, 0x2BC5210, 9);
-DataArray(TutorialScreenData, TutoScreenBig_G, 0x2BC5380, 9);
-DataArray(TutorialScreenData, TutoScreenBig_S, 0x2BC52C8, 9);
-DataArray(TutorialScreenData, TutoScreenGamma_E, 0x2BC4C08, 8);
-DataArray(TutorialScreenData, TutoScreenGamma_J, 0x2BC4B68, 8);
-DataArray(TutorialScreenData, TutoScreenGamma_F, 0x2BC4CA8, 8);
-DataArray(TutorialScreenData, TutoScreenGamma_G, 0x2BC4DE8, 8);
-DataArray(TutorialScreenData, TutoScreenGamma_S, 0x2BC4D48, 8);
+DataArray(TutorialScreenDataX, TutoScreenXSonic_E, 0x2BC3C30, 7);
+DataArray(TutorialScreenDataX, TutoScreenXSonic_J, 0x2BC3BA0, 7);
+DataArray(TutorialScreenDataX, TutoScreenXSonic_F, 0x2BC3CC0, 7);
+DataArray(TutorialScreenDataX, TutoScreenXSonic_G, 0x2BC3DE0, 7);
+DataArray(TutorialScreenDataX, TutoScreenXSonic_S, 0x2BC3D50, 7);
+DataArray(TutorialScreenDataX, TutoScreenXTails_E, 0x2BC4018, 7);
+DataArray(TutorialScreenDataX, TutoScreenXTails_J, 0x2BC3F78, 7);
+DataArray(TutorialScreenDataX, TutoScreenXTails_F, 0x2BC40A8, 7);
+DataArray(TutorialScreenDataX, TutoScreenXTails_S, 0x2BC4138, 7);
+DataArray(TutorialScreenDataX, TutoScreenXTails_G, 0x2BC41C8, 7);
+DataArray(TutorialScreenDataX, TutoScreenXKnuckles_E, 0x2BC4450, 7);
+DataArray(TutorialScreenDataX, TutoScreenXKnuckles_J, 0x2BC4398, 7);
+DataArray(TutorialScreenDataX, TutoScreenXKnuckles_F, 0x2BC44F0, 7);
+DataArray(TutorialScreenDataX, TutoScreenXKnuckles_G, 0x2BC4630, 7);
+DataArray(TutorialScreenDataX, TutoScreenXKnuckles_S, 0x2BC4590, 7);
+DataArray(TutorialScreenDataX, TutoScreenXAmy_E, 0x2BC4830, 7);
+DataArray(TutorialScreenDataX, TutoScreenXAmy_J, 0x2BC47A0, 7);
+DataArray(TutorialScreenDataX, TutoScreenXAmy_F, 0x2BC48C0, 7);
+DataArray(TutorialScreenDataX, TutoScreenXAmy_G, 0x2BC49E0, 7);
+DataArray(TutorialScreenDataX, TutoScreenXAmy_S, 0x2BC4950, 7);
+DataArray(TutorialScreenDataX, TutoScreenXBig_E, 0x2BC5158, 9);
+DataArray(TutorialScreenDataX, TutoScreenXBig_J, 0x2BC5090, 10);
+DataArray(TutorialScreenDataX, TutoScreenXBig_F, 0x2BC5210, 9);
+DataArray(TutorialScreenDataX, TutoScreenXBig_G, 0x2BC5380, 9);
+DataArray(TutorialScreenDataX, TutoScreenXBig_S, 0x2BC52C8, 9);
+DataArray(TutorialScreenDataX, TutoScreenXGamma_E, 0x2BC4C08, 8);
+DataArray(TutorialScreenDataX, TutoScreenXGamma_J, 0x2BC4B68, 8);
+DataArray(TutorialScreenDataX, TutoScreenXGamma_F, 0x2BC4CA8, 8);
+DataArray(TutorialScreenDataX, TutoScreenXGamma_G, 0x2BC4DE8, 8);
+DataArray(TutorialScreenDataX, TutoScreenXGamma_S, 0x2BC4D48, 8);
 
 //Tutorial screen items
-DataArray(TutorialScreenItem, TutorialLayout_Sonic_Page1_E, 0x02BC3ACE, 6);
-DataArray(TutorialScreenItem, TutorialLayout_Sonic_Page1_J, 0x02BC3A8E, 5);
-DataArray(TutorialScreenItem, TutorialLayout_SharedTailsKnucklesPage1_E, 0x2BC3E90, 4);
-DataArray(TutorialScreenItem, TutorialLayout_SharedTailsKnucklesPage1_J, 0x2BC3E74, 3);
-DataPointer(TutorialScreenItem, TutorialLayout_Tails_Page1_E, 0x2BC3EB2);
-DataPointer(TutorialScreenItem, TutorialLayout_Tails_Page1_J, 0x2BC3EAA);
-DataPointer(TutorialScreenItem, TutorialLayout_Knuckles_Page1_E, 0x2BC425E);
-DataPointer(TutorialScreenItem, TutorialLayout_Knuckles_Page1_J, 0x2BC4256);
-DataArray(TutorialScreenItem, TutorialLayout_AmyGamma_Page1_E, 0x2BC46E6, 4);
-DataArray(TutorialScreenItem, TutorialLayout_AmyGamma_Page1_J, 0x2BC46D2, 3);
-DataArray(TutorialScreenItem, TutorialLayout_Amy_Page1_E, 0x2BC4712, 2);
-DataArray(TutorialScreenItem, TutorialLayout_Amy_Page1_J, 0x2BC4702, 2);
-DataArray(TutorialScreenItem, TutorialLayout_BigPage1_E, 0x2BC4E8A, 4);
-DataArray(TutorialScreenItem, TutorialLayout_BigPage1Part2_E, 0x2BC4EB6, 2);
-DataArray(TutorialScreenItem, TutorialLayout_BigPage1Part2_J, 0x2BC4EA6, 2);
-DataArray(TutorialScreenItem, TutorialLayout_BigPage5_E, 0x2BC4F46, 6);
-DataArray(TutorialScreenItem, TutorialLayout_Gamma_Page1_E, 0x2BC4A7E, 2);
-DataArray(TutorialScreenItem, TutorialLayout_Gamma_Page1_J, 0x2BC4A6E, 2);
+DataArray(TutorialScreenItemX, TutorialLayoutX_Sonic_Page1_E, 0x02BC3ACE, 6);
+DataArray(TutorialScreenItemX, TutorialLayoutX_Sonic_Page1_J, 0x02BC3A8E, 5);
+DataArray(TutorialScreenItemX, TutorialLayoutX_SharedTailsKnucklesPage1_E, 0x2BC3E90, 4);
+DataArray(TutorialScreenItemX, TutorialLayoutX_SharedTailsKnucklesPage1_J, 0x2BC3E74, 3);
+DataPointer(TutorialScreenItemX, TutorialLayoutX_Tails_Page1_E, 0x2BC3EB2);
+DataPointer(TutorialScreenItemX, TutorialLayoutX_Tails_Page1_J, 0x2BC3EAA);
+DataPointer(TutorialScreenItemX, TutorialLayoutX_Knuckles_Page1_E, 0x2BC425E);
+DataPointer(TutorialScreenItemX, TutorialLayoutX_Knuckles_Page1_J, 0x2BC4256);
+DataArray(TutorialScreenItemX, TutorialLayoutX_AmyGamma_Page1_E, 0x2BC46E6, 4);
+DataArray(TutorialScreenItemX, TutorialLayoutX_AmyGamma_Page1_J, 0x2BC46D2, 3);
+DataArray(TutorialScreenItemX, TutorialLayoutX_Amy_Page1_E, 0x2BC4712, 2);
+DataArray(TutorialScreenItemX, TutorialLayoutX_Amy_Page1_J, 0x2BC4702, 2);
+DataArray(TutorialScreenItemX, TutorialLayoutX_BigPage1_E, 0x2BC4E8A, 4);
+DataArray(TutorialScreenItemX, TutorialLayoutX_BigPage1Part2_E, 0x2BC4EB6, 2);
+DataArray(TutorialScreenItemX, TutorialLayoutX_BigPage1Part2_J, 0x2BC4EA6, 2);
+DataArray(TutorialScreenItemX, TutorialLayoutX_BigPage5_E, 0x2BC4F46, 6);
+DataArray(TutorialScreenItemX, TutorialLayoutX_Gamma_Page1_E, 0x2BC4A7E, 2);
+DataArray(TutorialScreenItemX, TutorialLayoutX_Gamma_Page1_J, 0x2BC4A6E, 2);
 
