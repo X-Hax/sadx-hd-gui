@@ -1,3 +1,0 @@
-root=true
-[*.{c,h,cpp,hpp}]
-indent_style=tab
