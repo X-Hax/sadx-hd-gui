@@ -787,6 +787,7 @@ extern "C"
 			return;
 		}
 		//Subtitle hooks
+		WriteData<5>((char*)0x40CBED, 0x90u); //Disable "Now saving"
 		WriteCall((void*)0x40D7DA, DrawSubtitleHook);
 		WriteCall((void*)0x643DBA, LoadPVMHook_Recap);
 		WriteCall((void*)0x642363, RecapStart);
