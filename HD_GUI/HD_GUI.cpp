@@ -129,14 +129,14 @@ void DrawRecapLetter(NJS_SPRITE *sprite, Int index, float YPosition)
 	//PrintDebug("Y: %f, FA: %f\n", YPosition, FontAlpha);
 	if (SubtitleShadowX != 0 || SubtitleShadowY != 0)
 	{
-		SetMaterialAndSpriteColor_Float(max(0, FontAlpha - GlobalRecapAlphaForFadeout), 0, 0, 0);
+		SetMaterialAndSpriteColor_Float(max(0, FontAlpha * GlobalRecapAlphaForFadeout), 0, 0, 0);
 		sprite->p.x += SubtitleShadowX;
 		sprite->p.y += SubtitleShadowY;
 		njDrawSprite2D_ForcePriority(sprite, index, 1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 		sprite->p.x -= SubtitleShadowX;
 		sprite->p.y -= SubtitleShadowY;
 	}
-	SetMaterialAndSpriteColor_Float(max(0, FontAlpha - GlobalRecapAlphaForFadeout), max(0, (1.0f - GlobalRecapAlphaForFadeout)*RecapFontColorR / 255.0f), max(0, (1.0f - GlobalRecapAlphaForFadeout)*RecapFontColorG / 255.0f), max(0, (1.0f - GlobalRecapAlphaForFadeout)*RecapFontColorB / 255.0f));
+	SetMaterialAndSpriteColor_Float(max(0, FontAlpha * GlobalRecapAlphaForFadeout), max(0, GlobalRecapAlphaForFadeout*RecapFontColorR / 255.0f), max(0, GlobalRecapAlphaForFadeout*RecapFontColorG / 255.0f), max(0, GlobalRecapAlphaForFadeout*RecapFontColorB / 255.0f));
 	njDrawSprite2D_ForcePriority(sprite, index, 1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 }
 
@@ -1550,11 +1550,12 @@ extern "C"
 	{
 		if (TextLanguage)
 		{
-			if (GameMode != GameModes_Adventure_Story) {
+			if (GameMode != GameModes_Adventure_Story) 
+			{
 				ListenToRecap = 0;
-				GlobalRecapAlphaForFadeout = 0.0f;
+				GlobalRecapAlphaForFadeout = 1.0f;
 			}
-			else if (RecapScreenMode == 2 && GlobalRecapAlphaForFadeout < 1.0f) GlobalRecapAlphaForFadeout = min(1.0f, GlobalRecapAlphaForFadeout + 0.05f);
+			else if (RecapScreenMode == 2 && GlobalRecapAlphaForFadeout > 0.0f) GlobalRecapAlphaForFadeout = max(0.0f, GlobalRecapAlphaForFadeout - 0.05f);
 		}
 		if (TextLanguage == 3) PadManuXOffset_General = 230;
 		if (TextLanguage == 4 && GetCharacterSelection() != 4) PadManuXOffset_General = 220;
