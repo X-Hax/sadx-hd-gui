@@ -88,6 +88,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SubtitleData.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TitleScreenData.h" />
     <ClInclude Include="TutorialStuff.h" />
   </ItemGroup>
   <ItemGroup>
