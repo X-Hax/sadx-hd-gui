@@ -797,6 +797,7 @@ void DrawTitleScreenShit_cdecl(TitleScreenData* a1)
 	vscale = (float)VerticalResolution / 480.0f;
 	hzscale = (float)HorizontalResolution / 640.0f;
 	v1 = a1->dword30;
+	if (v1 < 2) xoffset = 0;
 	if (v1 >= 0x3C)
 	{
 		SetVtxColorA(0xFFFFFFFF);
@@ -822,7 +823,7 @@ void DrawTitleScreenShit_cdecl(TitleScreenData* a1)
 		ypos = -10 * vscale;
 		//Draw the four rows of clouds
 		xpos = 0;
-		for (int q = 0; q < times + 2; q++)
+		for (int q = 0; q < times + 1; q++)
 		{
 			for (int i = 0; i < 10; i++)
 			{
@@ -837,6 +838,7 @@ void DrawTitleScreenShit_cdecl(TitleScreenData* a1)
 		}
 		if (vscale >= 0.5f) xoffset += 2 * vscale;
 		else xoffset = 0;
+		//PrintDebug("v1: %f\n", xoffset*vscale* 0.5f);
 		//Draw the circles around Sonic (front)
 		xpos = center_x - 320.0f * vscale + 280 * vscale;
 		ypos = center_y - 240.0f * vscale + 52 * vscale;
@@ -1070,6 +1072,8 @@ extern "C"
 		ReplacePVMX("AVA_SNDTEST_E");
 		ReplacePVMX("AVA_SQUARE");
 		ReplacePVMX("AVA_STNAM");
+		ReplacePVMX("AVA_TITLE_CMN");
+		ReplacePVMX("AVA_GTITLE0_E");
 		ReplacePVMX("AVA_STNAM_E");
 		ReplacePVMX("AVA_SUUJI");
 		//ReplacePVMX("AVA_TITLE_BACK"); - not used
