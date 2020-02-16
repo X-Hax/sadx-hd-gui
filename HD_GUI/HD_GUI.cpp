@@ -327,7 +327,7 @@ void ParseSubtitle(const char* string)
 			//Add line to recap array
 			NumberOfTextLines++;
 			strcpy_s(TextLineArray[NumberOfTextLines - 1].LineString, SubtitleString);
-			for (int i = 0; i < strlen(SubtitleString); i++)
+			for (unsigned int i = 0; i < strlen(SubtitleString); i++)
 			{
 				//Calculate the line's width in pixels (at 1.0x) with character spacing
 				if (SubtitleString[i] != 0x07 && SubtitleString[i] != 0x09)	TextLineArray[NumberOfTextLines - 1].LineLength = TextLineArray[NumberOfTextLines - 1].LineLength + FontCharacterData[SubtitleString[i]].width + RecapSpacing;
@@ -753,7 +753,7 @@ void DrawSaveDeletedTextHook(NJS_TEXTURE_VTX *points, Int count, Uint32 gbix, In
 		//Set up scaling
 		SubtitleCharacterSprite.sx = 0.4f;
 		SubtitleCharacterSprite.sy = 0.4f;
-		for (int i = 0; i < strlen(SubtitleString); i++)
+		for (unsigned int i = 0; i < strlen(SubtitleString); i++)
 		{
 			//Calculate X position
 			if (i == 0) SubtitleCharacterSprite.p.x = OldOffsetX;
