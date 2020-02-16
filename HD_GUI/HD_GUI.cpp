@@ -330,7 +330,7 @@ void ParseSubtitle(const char* string)
 			for (unsigned int i = 0; i < strlen(SubtitleString); i++)
 			{
 				//Calculate the line's width in pixels (at 1.0x) with character spacing
-				if (SubtitleString[i] != 0x07 && SubtitleString[i] != 0x09)	TextLineArray[NumberOfTextLines - 1].LineLength = TextLineArray[NumberOfTextLines - 1].LineLength + FontCharacterData[SubtitleString[i]].width + RecapSpacing;
+				if (SubtitleString[i] != 0x07 && SubtitleString[i] != 0x09) TextLineArray[NumberOfTextLines - 1].LineLength = TextLineArray[NumberOfTextLines - 1].LineLength + FontCharacterData[SubtitleString[i] & 0xFF].width + RecapSpacing;
 			}
 		}
 	}
