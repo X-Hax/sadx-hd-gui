@@ -1,38 +1,37 @@
 #pragma once
 
 //Structs
-struct SubtitleNewlines
+
+struct SubtitleCodepage
 {
-	int Newline1;
-	int Newline2;
-	int Newline3;
+	int StartChar;
+	int TexID;
 };
 
 struct SubtitleThing
 {
-	char field_0;
-	char gap1[1];
-	float px;
-	float py;
-	int field_6;
-	int field_8;
-	float sx;
-	float sy;
-	__int16 width;
-	__int16 height;
-	__int16 field_12;
-	__int16 field_14;
-	__int16 field_16;
-	__int16 field_18;
-	__int16 field_1A;
-	NJS_BGRA colorA;
-	NJS_COLOR colorB;
+	char kind;
+	__int16 x;
+	__int16 y;
+	unsigned __int16 width;
+	unsigned __int16 height;
+	unsigned __int16 buf_width;
+	unsigned __int16 buf_height;
+	unsigned __int16 buf_width2;
+	unsigned __int16 buf_height2;
+	__int16 lx;
+	__int16 ly;
+	__int16 sx;
+	__int16 sy;
+	unsigned __int16 color;
+	NJS_COLOR fc;
+	NJS_COLOR bc;
 	float scale;
-	void *data_or_d3dtexture;
-	Uint32 gbix;
-	NJS_TEXLIST tlist;
+	void* bitmap;
+	unsigned int globalindex;
+	NJS_TEXLIST texlist;
 	NJS_TEXNAME texname;
-	int flags;
+	int msgc_flag;
 };
 
 struct FontOffset
@@ -45,7 +44,8 @@ struct FontOffset
 struct TextLine
 {
 	int LineLength;
-	char LineString[256];
+	//char LineString[256];
+	unsigned __int16 LineString_S[256];
 };
 
 //Pointers
@@ -315,9 +315,9 @@ static NJS_TEXANIM SubtitleFont[] = {
 
 static FontOffset FontCharacterData[] =
 {
+{0, 0, 0}, 
+{0, 0, 0},
 {40, 0, 0}, //Japanese ...
-{0, 0, 0},
-{0, 0, 0},
 {0, 0, 0},
 {0, 0, 0},
 {0, 0, 0},
@@ -574,10 +574,63 @@ static FontOffset FontCharacterData[] =
 {32, 0, 0}
 };
 
-static TextLine TextLineArray[256];
-
 //Misc
 NJS_TEXNAME SubtitleTexname[1];
 NJS_TEXLIST SubtitleTexlist = { arrayptrandlength(SubtitleTexname) };
 
+NJS_TEXNAME SubtitleJPTexname[44];
+NJS_TEXLIST SubtitleJPTexlist = {arrayptrandlength(SubtitleJPTexname)};
+
 PVMEntry SubtitlePVMEntry = { "SUBTITLE", (TexList *)&SubtitleTexlist };
+
+PVMEntry SubtitleJPPVMEntry = {"SUBTITLE_JP", (TexList*)&SubtitleJPTexlist};
+
+unsigned __int16 SubtitleArray[256];
+TextLine RecapArray[256];
+TextLine MissionArray[256];
+
+SubtitleCodepage JapaneseSubtitleCodepage[] = {
+	{ 0x8140, 0 },
+	{ 0x8240, 1 },
+	{ 0x8340, 2 },
+	{ 0x8440, 3 },
+	{ 0x8740, 4 },
+	{ 0x8840, 5 },
+	{ 0x8940, 6 },
+	{ 0x8A40, 7 },
+	{ 0x8B40, 8 },
+	{ 0x8C40, 9 },
+	{ 0x8D40, 10 },
+	{ 0x8E40, 11 },
+	{ 0x8F40, 12 },
+	{ 0x9040, 13 },
+	{ 0x9140, 14 },
+	{ 0x9240, 15 },
+	{ 0x9340, 16 },
+	{ 0x9440, 17 },
+	{ 0x9540, 18 },
+	{ 0x9640, 19 },
+	{ 0x9740, 20 },
+	{ 0x9840, 21 },
+	{ 0x9940, 22 },
+	{ 0x9A40, 23 },
+	{ 0x9B40, 24 },
+	{ 0x9C40, 25 },
+	{ 0x9D40, 26 },
+	{ 0x9E40, 27 },
+	{ 0x9F40, 28 },
+	{ 0xE040, 29 },
+	{ 0xE140, 30 },
+	{ 0xE240, 31 },
+	{ 0xE340, 32 },
+	{ 0xE440, 33 },
+	{ 0xE540, 34 },
+	{ 0xE640, 35 },
+	{ 0xE740, 36 },
+	{ 0xE840, 37 },
+	{ 0xE940, 38 },
+	{ 0xEA40, 39 },
+	{ 0xFA40, 40 },
+	{ 0xFB40, 41 },
+	{ 0xFC40, 42 },
+};

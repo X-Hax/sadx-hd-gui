@@ -38,7 +38,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="HD_GUI.cpp">
+    <ClCompile Include="mod.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Subtitles.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
