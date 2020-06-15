@@ -54,7 +54,7 @@ void DrawCharacter(NJS_SPRITE* sprite, unsigned __int16 index, char mode, float 
 		FontAlpha = 1.0f;
 		GlobalRecapAlphaForFadeout = 1.0f;
 	}
-	else if (mode == 3) //Mission tutorial text / parameter is scale
+	else if (mode == 3) //Mission tutorial text / parameter is eh
 	{
 		FontAlpha = 1.0f - MissionTextAlpha;
 		GlobalRecapAlphaForFadeout = 1.0f;
@@ -399,8 +399,8 @@ void DrawMissionTutorialTextHook(NJS_SPRITE* sp, Int n, Float pri, NJD_SPRITE at
 	float OffsetY = 0;
 	NJS_SPRITE SubtitleCharacterSprite = {{ 0, 0, 0 }, 0.4f, 0.4f, 0, &SubtitleTexlist, SubtitleFont};
 	//Set up scaling
-	SubtitleCharacterSprite.sx = 0.2f * ResolutionScale;
-	SubtitleCharacterSprite.sy = 0.2f * ResolutionScale;
+	SubtitleCharacterSprite.sx = 0.4f;
+	SubtitleCharacterSprite.sy = 0.4f;
 	for (int u = 0; u < NumberOfTextLines; u++)
 	{
 		//PrintDebug("Length for line %d: %i\n", u, RecapArray[u].LineLength);
@@ -424,7 +424,7 @@ void DrawMissionTutorialTextHook(NJS_SPRITE* sp, Int n, Float pri, NJD_SPRITE at
 			//Draw
 			if (RecapArray[u].LineString_S[i] != 0x0A && RecapArray[u].LineString_S[i] != 0x07 && RecapArray[u].LineString_S[i] != 0x09)
 			{
-				DrawCharacter(&SubtitleCharacterSprite, RecapArray[u].LineString_S[i], 3, sp->sy);
+				DrawCharacter(&SubtitleCharacterSprite, RecapArray[u].LineString_S[i], 3, OffsetY);
 			}
 			OldOffsetX = SubtitleCharacterSprite.p.x;
 		}
