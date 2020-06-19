@@ -123,7 +123,7 @@ void ScreenFadeFix(float left, float top, float right, float bottom, float depth
 	DrawRect_Queue(-50.0f, -50.0f, HorizontalResolution + 50.0f, VerticalResolution + 50.0f, 32048.0f, color, QueuedModelFlagsB_EnableZWrite);
 }
 
-void RenderShittyTextures(int texnum, float x, float y, float z, float scaleX, float scaleY)
+void DrawShittyTextures(int texnum, float x, float y, float z, float scaleX, float scaleY)
 {
 	DrawBG(texnum, x, y, z, scaleX, scaleY);
 	DoColorGradientThingMaybe(0xFF0016FF, 0xFF002EFF, 0xFF0016FF, 0xFF002EFF);
@@ -389,6 +389,12 @@ static void __declspec(naked) DrawTitleScreenShit_asm()
 		pop esi // a1
 		retn
 	}
+}
+
+void DrawChnamBShit(Uint8 index)
+{
+	Direct3D_SetZFunc(index);
+	Direct3D_EnableZWrite(1);
 }
 
 extern "C"
@@ -800,7 +806,8 @@ extern "C"
 		//Character select screen fixes
 		WriteCall((void*)0x00511AD0, RetrievePlayerSelectStuff); //Player select text in character select screen
 		WriteCall((void*)0x00511C76, RetrieveBottomThingStuff); //Bottom thing in character select screen
-		WriteCall((void*)0x00511B3B, RenderShittyTextures); //Render stuff that refuses to render properly otherwise
+		WriteCall((void*)0x00511B3B, DrawShittyTextures); //Draw stuff that refuses to render properly otherwise
+		WriteCall((void*)0x00511E47, DrawChnamBShit); //Fix disappearing character name after loading a different save
 		WriteCall((void*)0x00511A8B, DisplayScreenTexture_AlwaysTop); //Move the "Select your character" text to top
 		WriteData<5>((void*)0x00511C18, 0x90); //Disable ZFunc stuff to prevent character model overlap issues
 		//Shadow blending fixes
