@@ -8,6 +8,9 @@
 #include <Trampoline.h>
 #include <IniFile.hpp>
 
+NJS_TEXNAME TitleTexname[11];
+NJS_TEXNAME ObjectRegularTexname[100];
+
 void Subtitles_OnFrame();
 void Subtitles_Init(const char* path, const HelperFunctions& helperFunctions);
 
@@ -824,7 +827,8 @@ extern "C"
 		WriteCall((void*)0x0050782A, DrawTexture_Hook); //AVA_SAN triangle shadow
 		((NJS_OBJECT*)0x10D7774)->basicdxmodel->mats[0].diffuse.color = 0xFFB2B2B2; //Question mark from Character Select
 		((NJS_OBJECT*)0x10D7774)->basicdxmodel->mats[0].attr_texId = 10; //Question mark from Character Select
-		ResizeTextureList(&OBJ_REGULAR_TEXLIST, 100); //Added DC ripple texture
+		ResizeTextureList(&OBJ_REGULAR_TEXLIST, ObjectRegularTexname); //Added DC ripple texture
+		ResizeTextureList(&ava_title_e_TEXLIST, TitleTexname); //Added Internet option
 		WriteCall((void*)0x005092A1, FileIcon_Hook); //File icon
 		*(NJS_MODEL_SADX*)0x00989384 = attach_0019D298_2; //Switch
 		*(NJS_MODEL_SADX*)0x008BBD84 = attach_0019D298; //Switch (pressed)
