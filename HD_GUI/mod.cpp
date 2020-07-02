@@ -484,11 +484,14 @@ extern "C"
 		ReplacePVMX("AVA_SQUARE");
 		ReplacePVMX("AVA_STNAM");
 		ReplacePVMX("AVA_TITLE_CMN");
-		ReplacePVMX("AVA_GTITLE0_E");
 		ReplacePVMX("AVA_STNAM_E");
 		ReplacePVMX("AVA_SUUJI");
-		//ReplacePVMX("AVA_TITLE_BACK"); - not used
-		ReplacePVMX("AVA_TITLE_BACK_E");
+		if (ava_title_back_e_TEXLIST.nbTexture == 8) //Check if DC Conversion replaces TITLE_BACK and GTITLE0
+		{
+			//ReplacePVMX("AVA_TITLE_BACK"); - JP title screen, not used yet
+			ReplacePVMX("AVA_TITLE_BACK_E"); 
+			ReplacePVMX("AVA_GTITLE0_E");
+		}
 		ReplacePVMX("AVA_TITLE");
 		ReplacePVMX("AVA_TITLE_E");
 		ReplacePVMX("AVA_TRIALACTSEL");
