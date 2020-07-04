@@ -11,6 +11,7 @@
 void AddGameGearTextures_all();
 void ReinitScaling();
 void ScaleGameGear_all();
+void DrawGG_DisableFiltering(NJS_TEXTURE_VTX* a1, Int count, Uint32 gbix, Int flag);
 
 NJS_TEXNAME TitleTexname[11];
 NJS_TEXNAME ObjectRegularTexname[100];
@@ -428,6 +429,7 @@ extern "C"
 		ReinitScaling();
 		AddGameGearTextures_all();
 		ScaleGameGear_all();
+		WriteCall((void*)0x6FE9F8, DrawGG_DisableFiltering);
 		//Fix green rectangle in tutorials
 		WriteCall((void*)0x64393E, GreenRect_Wrapper);
 		//Fix random ring icon

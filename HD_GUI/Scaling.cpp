@@ -70,6 +70,11 @@ void ScaleGameGear_all()
 			pointer[i].Top.y = (float)VerticalResolution / 2.0f - (240.0f - GameGearTextureDataArray[index].top_y) * mainscale;
 		}
 	}
+	//Remove Tails Adventure overlay
+	((AdvertiseBaseParam*)0x87CB98)->Size.x = 0;
+	((AdvertiseBaseParam*)0x87CB98)->Size.y = 0;
+	//Scale emulator
+	WriteData((float*)0x0070142D, mainscale);
 	//Honeycomb
 	WriteData((float**)0x006FF5C8, &subscale);
 	WriteData((float**)0x006FF5D9, &subscale);
@@ -87,16 +92,26 @@ void ScaleGameGear_all()
 	WriteData((float**)0x006FDC76, &ggsel_topleft);
 	WriteData((float**)0x006FDC7C, &zerof);
 	WriteData((float**)0x006FDC88, &zerof);
-	//Emulator
-	WriteData((float**)0x006FEB63, &zerof);
-	WriteData((float**)0x006FEB83, &zerof);
-	WriteData((float**)0x006FEB91, &zerof);
-	WriteData((float**)0x006FEB9D, &zerof);
 	//General
 	WriteData((float**)0x00701447, &zerof);
 	WriteData((float**)0x00701453, &zerof);
 	WriteData((float**)0x00701469, &zerof);
 	WriteData((float**)0x00701478, &zerof);
+}
+
+void DrawGG_DisableFiltering(NJS_TEXTURE_VTX* a1, Int count, Uint32 gbix, Int flag)
+{
+	uint8_t Backup1 = TextureFilterSettingForPoint_1;
+	uint8_t Backup2 = TextureFilterSettingForPoint_2;
+	uint8_t Backup3 = TextureFilterSettingForPoint_3;
+	WriteData((uint8_t*)0x0078B7C4, (uint8_t)0x01);
+	WriteData((uint8_t*)0x0078B7D8, (uint8_t)0x01);
+	WriteData((uint8_t*)0x0078B7EC, (uint8_t)0x01);
+	njDrawTextureMemList(a1, count, gbix, flag);
+	Direct3D_TextureFilterPoint();
+	WriteData((uint8_t*)0x0078B7C4, Backup1);
+	WriteData((uint8_t*)0x0078B7D8, Backup2);
+	WriteData((uint8_t*)0x0078B7EC, Backup3);
 }
 
 void ReinitScaling()
