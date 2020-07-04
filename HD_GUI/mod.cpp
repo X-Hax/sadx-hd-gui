@@ -8,6 +8,10 @@
 #include <Trampoline.h>
 #include <IniFile.hpp>
 
+void AddGameGearTextures_all();
+void ReinitScaling();
+void ScaleGameGear_all();
+
 NJS_TEXNAME TitleTexname[11];
 NJS_TEXNAME ObjectRegularTexname[100];
 
@@ -420,6 +424,10 @@ extern "C"
 		//Chao Race HUD scaling
 		WriteCall((void*)0x75144B, CopySpriteHook);
 		FixChaoRaceScaling();
+		//Game Gear scaling
+		ReinitScaling();
+		AddGameGearTextures_all();
+		ScaleGameGear_all();
 		//Fix green rectangle in tutorials
 		WriteCall((void*)0x64393E, GreenRect_Wrapper);
 		//Fix random ring icon
@@ -1188,7 +1196,9 @@ extern "C"
 	}
 	__declspec(dllexport) void __cdecl OnRenderDeviceReset()
 	{
+		ReinitScaling();
 		xoffset = 0;
 		FixChaoRaceScaling();
+		ScaleGameGear_all();
 	}
 }

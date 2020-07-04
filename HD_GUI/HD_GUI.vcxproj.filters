@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -36,12 +33,18 @@
     <ClInclude Include="TitleScreenData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Scaling.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mod.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Subtitles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scaling.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

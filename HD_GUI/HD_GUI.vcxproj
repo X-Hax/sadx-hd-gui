@@ -85,7 +85,7 @@
   <ItemGroup>
     <ClInclude Include="CommonObjects.h" />
     <ClInclude Include="Objects_Shooting.h" />
-    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Scaling.h" />
     <ClInclude Include="SubtitleData.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TitleScreenData.h" />
@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mod.cpp" />
+    <ClCompile Include="Scaling.cpp" />
     <ClCompile Include="Subtitles.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
