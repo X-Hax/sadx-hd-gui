@@ -70,10 +70,11 @@ void ScaleGameGear_all()
 			pointer[i].Top.y = (float)VerticalResolution / 2.0f - (240.0f - GameGearTextureDataArray[index].top_y) * mainscale;
 		}
 	}
-	//Remove Tails Adventure overlay
-	((AdvertiseBaseParam*)0x87CB98)->Size.x = 0;
-	((AdvertiseBaseParam*)0x87CB98)->Size.y = 0;
 	//Scale emulator
+	//WriteData((float**)0x006FEB63, &zerof);
+	//WriteData((float**)0x006FEB83, &zerof);
+	//WriteData((float**)0x006FEB91, &zerof);
+	//WriteData((float**)0x006FEB9D, &zerof);
 	WriteData((float*)0x0070142D, mainscale);
 	//Honeycomb
 	WriteData((float**)0x006FF5C8, &subscale);
@@ -84,7 +85,7 @@ void ScaleGameGear_all()
 	WriteData((float**)0x006FF632, &subscale);
 	WriteData((float**)0x006FF657, &subscale);
 	//Selection rectangle (pause)
-	WriteData((char*)0x006FE265, char(int(46.0f * mainscale)));
+	WriteData((char*)0x006FE265, char(int(46.0f * mainscale))); //This shit uses imul so if it goes over 128 pixels it breaks
 	//Selection rectangle (main)
 	ggsel_size = mainscale * 47.0f;
 	ggsel_topleft = (float)VerticalResolution / 2.0f - (240.0f - 136.0f) * mainscale;

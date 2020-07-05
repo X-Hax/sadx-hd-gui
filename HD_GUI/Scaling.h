@@ -32,7 +32,10 @@ GameGearTextureArray GameGearTextures[] = {
 	{ 0x87C348, 3 },
 	{ 0x87ECD0, 31 },
 	{ 0x87E0C8, 24 },
-	//{ 0x87CAA8, 6 }, //Emulator (scaled separately)
+	//{ 0x87CAA8, 2 }, //Emulator (scaled separately)
+	//{ 0x87CB08, 2 }, //2P mode (scaled separately)
+	{ 0x87CB68, 1 }, //GG_BG
+	{ 0x87CB98, 1 }, //GG_TENKAN
 	{ 0x87F358, 17 },
 	{ 0x87F9A0, 7 },
 	{ 0x87C490, 15 },

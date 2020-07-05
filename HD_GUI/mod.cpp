@@ -426,10 +426,12 @@ extern "C"
 		WriteCall((void*)0x75144B, CopySpriteHook);
 		FixChaoRaceScaling();
 		//Game Gear scaling
+		/*
 		ReinitScaling();
 		AddGameGearTextures_all();
 		ScaleGameGear_all();
 		WriteCall((void*)0x6FE9F8, DrawGG_DisableFiltering);
+		*/
 		//Fix green rectangle in tutorials
 		WriteCall((void*)0x64393E, GreenRect_Wrapper);
 		//Fix random ring icon
@@ -1198,9 +1200,11 @@ extern "C"
 	}
 	__declspec(dllexport) void __cdecl OnRenderDeviceReset()
 	{
+		/*
 		ReinitScaling();
+		ScaleGameGear_all();
+		*/
 		xoffset = 0;
 		FixChaoRaceScaling();
-		ScaleGameGear_all();
 	}
 }
