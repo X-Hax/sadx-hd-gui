@@ -538,12 +538,14 @@ void DrawRecapTextHook(NJS_TEXTURE_VTX* points, Int count, Uint32 gbix, Int flag
 	//Set up scaling
 	SubtitleCharacterSprite.sx = 0.4f * ResolutionScale;
 	SubtitleCharacterSprite.sy = 0.4f * ResolutionScale;
+	float LeftCorner = ((float)HorizontalResolution - ResolutionScale * 640.0f)/2.0f;
+	//PrintDebug("Left: %f\n", LeftCorner);
 	for (int u = 0; u < NumberOfTextLines; u++)
 	{
 		//PrintDebug("Length for line %d: %i\n", u, RecapArray[u].LineLength);
 		//Calculate centering
 		if (RecapArray[u].LineString_S[0] == 0x07 || RecapArray[u].LineString_S[0] == 0x09) OldOffsetX = ((float)HorizontalResolution / 2.0f) - SubtitleCharacterSprite.sx * (RecapArray[u].LineLength / 2);
-		else OldOffsetX = 64 * ResolutionScale;
+		else OldOffsetX = LeftCorner + 64 * ResolutionScale;
 		for (int i = 0; i < 255; i++)
 		{
 			if (RecapArray[u].LineString_S[i] == 0) break;
