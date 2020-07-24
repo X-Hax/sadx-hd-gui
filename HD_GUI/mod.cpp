@@ -817,7 +817,6 @@ extern "C"
 		WriteData((float*)0x004333A0, -1.0f); //Screen fade for tutorials
 		WriteData((float*)0x004333AE, -1.0f); //Screen fade for tutorials
 		WriteCall((void*)0x0042BF52, ScreenFadeFix);
-		WriteData<5>((char*)0x0040BF27, 0x90); //Disable "Now saving..."
 		WriteData<5>((void*)0x0040BE0D, 0x90); //Disable "Now loading..."
 		WriteData<5>((void*)0x00503438, 0x90); //Disable "Now loading..."
 		WriteData<5>((void*)0x0050346D, 0x90); //Disable "Now loading..."

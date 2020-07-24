@@ -658,7 +658,12 @@ void Subtitles_Init(const char* path, const HelperFunctions& helperFunctions)
 {
 	//Subtitle hooks
 	WriteCall((void*)0x6431D3, MissionWindowHook);
-	WriteData<5>((char*)0x40CBED, 0x90u); //Disable "Now saving"
+	//Disable all the stuff that sets up the "Now saving" text but nothing else
+	WriteData<5>((char*)0x40BE6C, 0x90);
+	WriteData<5>((char*)0x40BE92, 0x90);
+	WriteData<5>((char*)0x40BEA1, 0x90);
+	WriteData<5>((char*)0x40BEAB, 0x90);
+	WriteData<5>((char*)0x40BF27, 0x90);
 	WriteCall((void*)0x40D7DA, DrawSubtitleHook);
 	WriteCall((void*)0x643DBA, LoadPVMHook_Recap);
 	WriteCall((void*)0x642363, RecapStart);
