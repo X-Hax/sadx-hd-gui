@@ -10,8 +10,6 @@ Alternatively you could install HD GUI 2 manually by downloading the latest AppV
 
 **Latest development build:** https://ci.appveyor.com/api/projects/PiKeyAr/sadx-hd-gui/artifacts/bin/HD_DCStyle.7z
 
-Developer's Twitter: https://twitter.com/pkr_sadx
-
 **Related mods:**
 
 Dreamcast Conversion: https://github.com/PiKeyAr/sadx_dreamcast
