@@ -4,7 +4,7 @@ HD GUI 2 is a mod for Sonic Adventure DX PC that adds high-resolution textures f
 
 To install HD GUI 2 you can use SADX Mod Installer that sets up SADX Mod Loader and downloads the latest versions of mods automatically. The installer can also convert the Steam version of SADX to the 2004 version, which supports the Mod Loader. 
 
-**SADX Mod Installer:** http://www.moddb.com/mods/sadx-dreamcast-conversion/news/new-mod-installer-now-available1
+**SADX Mod Installer:** https://sadxmodinstaller.unreliable.network
 
 Alternatively you could install HD GUI 2 manually by downloading the latest AppVeyor development build from the link below.
 
