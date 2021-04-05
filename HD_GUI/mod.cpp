@@ -287,7 +287,7 @@ void DrawTitleScreenShit_cdecl(TitleScreenData* a1)
 		DrawBG(0x40000001, 0, ypos, 1.3f, (float)HorizontalResolution / 256.0f, vscale * 0.5f);
 		SetVtxColorB(0xFFFFFFFF);
 		//Draw copyright text
-		xpos = center_x - 40.0f * vscale;
+		xpos = center_x;
 		ypos = center_y + 140.0f * vscale;
 		DrawBG(11, xpos, ypos, 1.3f, vscale * 0.4f, vscale * 0.4f);
 		DrawBG(12, xpos + 256.0f * vscale * 0.4f, ypos, 1.3f, vscale * 0.4f, vscale * 0.4f);
