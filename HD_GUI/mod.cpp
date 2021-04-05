@@ -16,6 +16,9 @@ void DrawGG_DisableFiltering(NJS_TEXTURE_VTX* a1, Int count, Uint32 gbix, Int fl
 NJS_TEXNAME TitleTexname[11];
 NJS_TEXLIST TitleTexlist = {arrayptrandlength(TitleTexname)};
 
+NJS_TEXNAME TitleCmnTexname[70];
+NJS_TEXLIST TitleCmnTexlist = {arrayptrandlength(TitleCmnTexname)};
+
 NJS_TEXNAME ObjectRegularTexname[100];
 NJS_TEXLIST ObjectRegularTexlist = {arrayptrandlength(ObjectRegularTexname)};
 
@@ -822,6 +825,7 @@ extern "C"
 		((NJS_OBJECT*)0x10D7774)->basicdxmodel->mats[0].attr_texId = 10; //Question mark from Character Select
 		OBJ_REGULAR_TEXLIST = ObjectRegularTexlist; //Added DC ripple texture
 		ava_title_e_TEXLIST = TitleTexlist; //Added Internet option
+		ava_title_cmn_TEXLIST = TitleCmnTexlist;
 		WriteCall((void*)0x005092A1, FileIcon_Hook); //File icon
 		*(NJS_MODEL_SADX*)0x00989384 = attach_0019D298_2; //Switch
 		*(NJS_MODEL_SADX*)0x008BBD84 = attach_0019D298; //Switch (pressed)
