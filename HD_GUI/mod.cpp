@@ -237,10 +237,10 @@ void DrawTitleScreenShit_cdecl(TitleScreenData* a1)
 				xpos = 256.0f * vscale * 0.5f * (i + 10 * q) - xoffset;
 				//if (xpos <= -2560.0f/vscale) xoffset = 0;
 				//PrintDebug("xpos: %f\n", xpos);
-				DrawBG(27 + i, xpos, ypos, 2.0f, vscale * 0.5f, vscale * 0.5f);
-				DrawBG(37 + i, xpos, ypos + 256.0f * vscale * 0.5f, 2.0f, vscale * 0.5f, vscale * 0.5f);
-				DrawBG(47 + i, xpos, ypos + 512.0f * vscale * 0.5f, 2.0f, vscale * 0.5f, vscale * 0.5f);
-				DrawBG(57 + i, xpos, ypos + 768.0f * vscale * 0.5f, 2.0f, vscale * 0.5f, vscale * 0.5f);
+				DrawBG(30 + i, xpos, ypos, 2.0f, vscale * 0.5f, vscale * 0.5f);
+				DrawBG(40 + i, xpos, ypos + 256.0f * vscale * 0.5f, 2.0f, vscale * 0.5f, vscale * 0.5f);
+				DrawBG(50 + i, xpos, ypos + 512.0f * vscale * 0.5f, 2.0f, vscale * 0.5f, vscale * 0.5f);
+				DrawBG(60 + i, xpos, ypos + 768.0f * vscale * 0.5f, 2.0f, vscale * 0.5f, vscale * 0.5f);
 			}
 		}
 		if (vscale >= 0.5f) xoffset += 2 * vscale;
@@ -303,19 +303,17 @@ void DrawTitleScreenShit_cdecl(TitleScreenData* a1)
 		{
 			if (sonic_xoffset > 63) sonic_xoffset -= 64; else sonic_xoffset = 0;
 		}
-		DrawBG(14, xpos, ypos, 1.2f, vscale * 0.5f, vscale * 0.5f);
-		DrawBG(15, xpos + 256.0f * vscale * 0.5f, ypos, 1.2f, vscale * 0.5f, vscale * 0.5f);
-		DrawBG(16, xpos + 512.0f * vscale * 0.5f, ypos, 1.2f, vscale * 0.5f, vscale * 0.5f);
-		DrawBG(17, xpos + 256.0f * vscale * 0.5f, ypos + 256.0f * vscale * 0.5f, 1.2f, vscale * 0.5f, vscale * 0.5f);
-		DrawBG(18, xpos + 512.0f * vscale * 0.5f, ypos + 256.0f * vscale * 0.5f, 1.2f, vscale * 0.5f, vscale * 0.5f);
-		DrawBG(19, xpos, ypos + 512.0f * vscale * 0.5f, 1.2f, vscale * 0.5f, vscale * 0.5f);
-		DrawBG(20, xpos + 256.0f * vscale * 0.5f, ypos + 512.0f * vscale * 0.5f, 1.2f, vscale * 0.5f, vscale * 0.5f);
-		DrawBG(21, xpos + 512.0f * vscale * 0.5f, ypos + 512.0f * vscale * 0.5f, 1.2f, vscale * 0.5f, vscale * 0.5f);
-		DrawBG(22, xpos + 768.0f * vscale * 0.5f, ypos + 512.0f * vscale * 0.5f, 1.2f, vscale * 0.5f, vscale * 0.5f);
-		DrawBG(23, xpos, ypos + 768.0f * vscale * 0.5f, 1.2f, vscale * 0.5f, vscale * 0.5f);
-		DrawBG(24, xpos + 256.0f * vscale * 0.5f, ypos + 768.0f * vscale * 0.5f, 1.2f, vscale * 0.5f, vscale * 0.5f);
-		DrawBG(25, xpos + 512.0f * vscale * 0.5f, ypos + 768.0f * vscale * 0.5f, 1.2f, vscale * 0.5f, vscale * 0.5f);
-		DrawBG(26, xpos + 768.0f * vscale * 0.5f, ypos + 768.0f * vscale * 0.5f, 1.2f, vscale * 0.5f, vscale * 0.5f);
+		int sonictex = 0;
+		for (int v = 0; v < 4; v++)
+		{
+			for (int h = 0; h < 4; h++)
+			{
+				float finalx = xpos + 256.0f * h * vscale * 0.5f;
+				float finaly = ypos + 256.0f * v * vscale * 0.5f;
+				DrawBG(14 + sonictex, finalx, finaly, 1.2f, vscale * 0.5f, vscale * 0.5f);
+				sonictex++;
+			}
+		}
 		//Draw logo
 		njSetTexture(&ava_gtitle0_e_TEXLIST);
 		xpos = center_x - (171.0f + logo_xoffset) * vscale;
