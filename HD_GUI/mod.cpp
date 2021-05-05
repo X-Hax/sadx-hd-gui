@@ -3,15 +3,11 @@
 #include "Objects_Shooting.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include "TutorialStuff.h"
-#include "TitleScreenData.h"
 #include <Trampoline.h>
 #include <IniFile.hpp>
-
-void AddGameGearTextures_all();
-void ReinitScaling();
-void ScaleGameGear_all();
-void DrawGG_DisableFiltering(NJS_TEXTURE_VTX* a1, Int count, Uint32 gbix, Int flag);
+#include "TutorialStuff.h"
+#include "TitleScreenData.h"
+#include "GameGear.h"
 
 NJS_TEXNAME TitleTexname[11];
 NJS_TEXLIST TitleTexlist = {arrayptrandlength(TitleTexname)};
@@ -24,6 +20,8 @@ NJS_TEXLIST ObjectRegularTexlist = {arrayptrandlength(ObjectRegularTexname)};
 
 void Subtitles_OnFrame();
 void Subtitles_Init(const char* path, const HelperFunctions& helperFunctions);
+void GameGear_Init();
+void GenerateGameGearBackground();
 
 #define ReplacePVMX(a) helperFunctions.ReplaceFile("system\\" a ".PVM", "system\\" a "_HD.PVM")
 
@@ -407,13 +405,8 @@ extern "C"
 		}
 		//Title screen
 		WriteCall((void*)0x51037E, DrawTitleScreenShit_asm);
-		//Game Gear scaling
-		/*
-		ReinitScaling();
-		AddGameGearTextures_all();
-		ScaleGameGear_all();
-		WriteCall((void*)0x6FE9F8, DrawGG_DisableFiltering);
-		*/
+		//Mini Game Collection
+		GameGear_Init();
 		//Fix green rectangle in tutorials
 		WriteCall((void*)0x64393E, GreenRect_Wrapper);
 		//Fix random ring icon
@@ -1182,10 +1175,7 @@ extern "C"
 	}
 	__declspec(dllexport) void __cdecl OnRenderDeviceReset()
 	{
-		/*
-		ReinitScaling();
-		ScaleGameGear_all();
-		*/
 		xoffset = 0;
+		GenerateGameGearBackground();
 	}
 }

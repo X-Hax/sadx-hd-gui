@@ -84,16 +84,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CommonObjects.h" />
+    <ClInclude Include="GameGear.h" />
     <ClInclude Include="Objects_Shooting.h" />
-    <ClInclude Include="Scaling.h" />
     <ClInclude Include="SubtitleData.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TitleScreenData.h" />
     <ClInclude Include="TutorialStuff.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GameGear.cpp" />
     <ClCompile Include="mod.cpp" />
-    <ClCompile Include="Scaling.cpp" />
     <ClCompile Include="Subtitles.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

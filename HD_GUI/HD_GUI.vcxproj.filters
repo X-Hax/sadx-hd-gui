@@ -33,7 +33,7 @@
     <ClInclude Include="TitleScreenData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Scaling.h">
+    <ClInclude Include="GameGear.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,7 +44,7 @@
     <ClCompile Include="Subtitles.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Scaling.cpp">
+    <ClCompile Include="GameGear.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
