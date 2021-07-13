@@ -45,6 +45,11 @@ void GenerateGameGearBackground();
 	helperFunctions.ReplaceFile("system\\" a ".PVR", pathbuf); \
 } while (0)
 
+#define ReplacePNG_MissionF(a) do { \
+	_snprintf_s(pathbuf, LengthOfArray(pathbuf), "%s\\textures\\pvr_mission_fr\\index.txt", path); \
+	helperFunctions.ReplaceFile("system\\" a ".PVR", pathbuf); \
+} while (0)
+
 #define ReplacePNG_StageE(a) do { \
 	_snprintf_s(pathbuf, LengthOfArray(pathbuf), "%s\\textures\\pvr_stage_en\\index.txt", path); \
 	helperFunctions.ReplaceFile("system\\" a ".PVR", pathbuf); \
@@ -784,6 +789,58 @@ extern "C"
 			ReplacePNG_GoalRing("MISSION_S_RINGBOX_E");
 			ReplacePNG_GoalRing("MISSION_T_BOX_E");
 		}
+		// French mission PVRs
+		ReplacePNG_MissionF("MISSION_A_BALRING_F");
+		ReplacePNG_MissionF("MISSION_A_BALZERO_F");
+		ReplacePNG_MissionF("MISSION_A_FIN_F");
+		ReplacePNG_MissionF("MISSION_A_HOT_F");
+		ReplacePNG_MissionF("MISSION_A_TWIN_F");
+		ReplacePNG_MissionF("MISSION_BIG_1K_F");
+		ReplacePNG_MissionF("MISSION_BIG_2K_F");
+		ReplacePNG_MissionF("MISSION_BIG_FROG_F");
+		ReplacePNG_MissionF("MISSION_G_103RING_F");
+		ReplacePNG_MissionF("MISSION_G_103_F");
+		ReplacePNG_MissionF("MISSION_G_104RING_F");
+		ReplacePNG_MissionF("MISSION_G_104_F");
+		ReplacePNG_MissionF("MISSION_G_105RING_F");
+		ReplacePNG_MissionF("MISSION_G_105_F");
+		ReplacePNG_MissionF("MISSION_G_EME_F");
+		ReplacePNG_MissionF("MISSION_G_FIN_F");
+		ReplacePNG_MissionF("MISSION_G_FROGRING_F");
+		ReplacePNG_MissionF("MISSION_G_FROG_F");
+		ReplacePNG_MissionF("MISSION_G_HOT_F");
+		ReplacePNG_MissionF("MISSION_G_RED_F");
+		ReplacePNG_MissionF("MISSION_G_SONICDRING_F");
+		ReplacePNG_MissionF("MISSION_G_SONICD_F");
+		ReplacePNG_MissionF("MISSION_G_WIN_F");
+		ReplacePNG_MissionF("MISSION_K_1MIN_F");
+		ReplacePNG_MissionF("MISSION_K_2MIN_F");
+		ReplacePNG_MissionF("MISSION_K_3EME_F");
+		ReplacePNG_MissionF("MISSION_K_NOHINT_F");
+		ReplacePNG_MissionF("MISSION_S_BOX25MIN_F");
+		ReplacePNG_MissionF("MISSION_S_BOX2MIN_F");
+		ReplacePNG_MissionF("MISSION_S_BOX3MIN_F");
+		ReplacePNG_MissionF("MISSION_S_BOX45MIN_F");
+		ReplacePNG_MissionF("MISSION_S_BOX4MIN_F");
+		ReplacePNG_MissionF("MISSION_S_BOX5MIN_F");
+		ReplacePNG_MissionF("MISSION_S_BOX_F");
+		ReplacePNG_MissionF("MISSION_S_EGGC_F");
+		ReplacePNG_MissionF("MISSION_S_EMECASINO_F");
+		ReplacePNG_MissionF("MISSION_S_EMESNOW_F");
+		ReplacePNG_MissionF("MISSION_S_EMEWIND_F");
+		ReplacePNG_MissionF("MISSION_S_FEGG_F");
+		ReplacePNG_MissionF("MISSION_S_ISEKI_F");
+		ReplacePNG_MissionF("MISSION_S_RINGBOX_F");
+		ReplacePNG_MissionF("MISSION_S_TAILS_F");
+		ReplacePNG_MissionF("MISSION_T_BOX_F");
+		ReplacePNG_MissionF("MISSION_T_EMECASINO_F");
+		ReplacePNG_MissionF("MISSION_T_EMESNOW_F");
+		ReplacePNG_MissionF("MISSION_T_EMEWIND_F");
+		ReplacePNG_MissionF("MISSION_T_FASTEGG_F");
+		ReplacePNG_MissionF("MISSION_T_FASTSONIC_F");
+		ReplacePNG_MissionF("MISSION_T_MISS_F");
+		ReplacePNG_MissionF("MISSION_T_RINGEGG_F");
+		ReplacePNG_MissionF("MISSION_T_RINGSONIC_F");
 		//Screen fade fixes
 		f480_Fixed = 1.0f + VerticalResolution;
 		f640_Fixed = 1.0f + HorizontalResolution;
