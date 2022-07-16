@@ -20,7 +20,7 @@ struct TutorialScreenItemX
 	__int16 YOffset;
 };
 
-//Tutorial screens
+// Tutorial screens
 DataArray(TutorialScreenDataX, TutoScreenXSonic_E, 0x2BC3C30, 7);
 DataArray(TutorialScreenDataX, TutoScreenXSonic_J, 0x2BC3BA0, 7);
 DataArray(TutorialScreenDataX, TutoScreenXSonic_F, 0x2BC3CC0, 7);
@@ -52,7 +52,7 @@ DataArray(TutorialScreenDataX, TutoScreenXGamma_F, 0x2BC4CA8, 8);
 DataArray(TutorialScreenDataX, TutoScreenXGamma_G, 0x2BC4DE8, 8);
 DataArray(TutorialScreenDataX, TutoScreenXGamma_S, 0x2BC4D48, 8);
 
-//Tutorial screen items
+// Tutorial screen items
 DataArray(TutorialScreenItemX, TutorialLayoutX_Sonic_Page1_E, 0x02BC3ACE, 6);
 DataArray(TutorialScreenItemX, TutorialLayoutX_Sonic_Page1_J, 0x02BC3A8E, 5);
 DataArray(TutorialScreenItemX, TutorialLayoutX_SharedTailsKnucklesPage1_E, 0x2BC3E90, 4);
@@ -71,4 +71,3 @@ DataArray(TutorialScreenItemX, TutorialLayoutX_BigPage1Part2_J, 0x2BC4EA6, 2);
 DataArray(TutorialScreenItemX, TutorialLayoutX_BigPage5_E, 0x2BC4F46, 6);
 DataArray(TutorialScreenItemX, TutorialLayoutX_Gamma_Page1_E, 0x2BC4A7E, 2);
 DataArray(TutorialScreenItemX, TutorialLayoutX_Gamma_Page1_J, 0x2BC4A6E, 2);
-
