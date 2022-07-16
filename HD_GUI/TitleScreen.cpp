@@ -25,7 +25,8 @@ void DrawTitleScreenShit_cdecl(TitleScreenData* a1)
 	vscale = (float)VerticalResolution / 480.0f;
 	hzscale = (float)HorizontalResolution / 640.0f;
 	v1 = a1->dword30;
-	if (v1 < 2) xoffset = 0;
+	if (v1 < 2) 
+		xoffset = 0;
 	if (v1 >= 0x3C)
 	{
 		SetVtxColorA(0xFFFFFFFF);
@@ -39,17 +40,17 @@ void DrawTitleScreenShit_cdecl(TitleScreenData* a1)
 	}
 	SetVtxColorB(0xFFFFFFFF);
 	njSetTexture(&ava_title_cmn_TEXLIST);
-	njTextureShadingMode(1); //Disable alpha rejection
+	njTextureShadingMode(1); // Disable alpha rejection
 	if (!MissedFrames)
 	{
-		//The full scrolling clouds image is 2560 (1280 at 1x) pixels wide
+		// The full scrolling clouds image is 2560 (1280 at 1x) pixels wide
 		float scale = 1280 * vscale;
 		int delta = HorizontalResolution - (int)scale;
 		int times = 2 + ceil(delta / scale);
 		//PrintDebug("Vscale: %f, Scale: %f\n", vscale, times);
-		//Draw the scrolling clouds
+		// Draw the scrolling clouds
 		ypos = -10 * vscale;
-		//Draw the four rows of clouds
+		// Draw the four rows of clouds
 		xpos = 0;
 		for (int q = 0; q < times + 1; q++)
 		{
@@ -64,10 +65,12 @@ void DrawTitleScreenShit_cdecl(TitleScreenData* a1)
 				DrawBG(60 + i, xpos, ypos + 768.0f * vscale * 0.5f, 2.0f, vscale * 0.5f, vscale * 0.5f);
 			}
 		}
-		if (vscale >= 0.5f) xoffset += 2 * vscale;
-		else xoffset = 0;
+		if (vscale >= 0.5f) 
+			xoffset += 2 * vscale;
+		else 
+			xoffset = 0;
 		//PrintDebug("v1: %f\n", xoffset*vscale* 0.5f);
-		//Draw the circles around Sonic (front)
+		// Draw the circles around Sonic (front)
 		xpos = center_x - 320.0f * vscale + 280 * vscale;
 		ypos = center_y - 240.0f * vscale + 52 * vscale;
 		DrawBG(2, xpos, ypos, 1.4f, vscale * 0.5f, vscale * 0.5f);
@@ -76,14 +79,14 @@ void DrawTitleScreenShit_cdecl(TitleScreenData* a1)
 		DrawBG(5, xpos + 256.0f * vscale * 0.5f, ypos + 256.0f * vscale * 0.5f, 1.4f, vscale * 0.5f, vscale * 0.5f);
 		DrawBG(6, xpos, ypos + 512.0f * vscale * 0.5f, 1.4f, vscale * 0.5f, vscale * 0.5f);
 		DrawBG(7, xpos + 256.0f * vscale * 0.5f, ypos + 512.0f * vscale * 0.5f, 1.4f, vscale * 0.5f, vscale * 0.5f);
-		//Draw the circles around Sonic (back)
+		// Draw the circles around Sonic (back)
 		xpos = center_x - 320.0f * vscale - 90.0f * vscale;
 		ypos = center_y - 240.0f * vscale + 52 * vscale;
 		DrawBG(8, xpos, ypos, 1.3f, vscale * 0.5f, vscale * 0.5f);
 		DrawBG(9, xpos, ypos + 256.0f * vscale * 0.5f, 1.4f, vscale * 0.5f, vscale * 0.5f);
 		DrawBG(10, xpos, ypos + 512.0f * vscale * 0.5f, 1.4f, vscale * 0.5f, vscale * 0.5f);
-		//Draw the gradient overlay/border thing
-		//Left
+		// Draw the gradient overlay/border thing
+		// Left
 		if (v1 <= 60)
 		{
 			color1.argb.a = int(((float)v1 / 60.0f) * 255);
@@ -100,29 +103,32 @@ void DrawTitleScreenShit_cdecl(TitleScreenData* a1)
 		}
 		ScreenTextureVertices[0].col = color1.color;
 		ScreenTextureVertices[1].col = color2.color;
-		//Right
+		// Right
 		ScreenTextureVertices[2].col = color3.color;
 		ScreenTextureVertices[3].col = color4.color;
 		DrawBG(1, 0, 0, 1.3f, (float)HorizontalResolution / 256.0f, vscale * 0.5f);
 		ypos = (float)VerticalResolution - 256.0f * vscale * 0.5f;
 		DrawBG(0x40000001, 0, ypos, 1.3f, (float)HorizontalResolution / 256.0f, vscale * 0.5f);
 		SetVtxColorB(0xFFFFFFFF);
-		//Draw copyright text
+		// Draw copyright text
 		xpos = center_x;
 		ypos = center_y + 140.0f * vscale;
 		DrawBG(11, xpos, ypos, 1.3f, vscale * 0.4f, vscale * 0.4f);
 		DrawBG(12, xpos + 256.0f * vscale * 0.4f, ypos, 1.3f, vscale * 0.4f, vscale * 0.4f);
 		DrawBG(13, xpos + 512.0f * vscale * 0.4f, ypos, 1.3f, vscale * 0.4f, vscale * 0.4f);
-		//Draw the lines above and below the gradients
+		// Draw the lines above and below the gradients
 		DrawBG(0, 0, 0, 1.3f, (float)HorizontalResolution / 256.0f, vscale * 0.5f);
 		ypos = (float)VerticalResolution - 256.0f * vscale * 0.5f;
 		DrawBG(0x40000000, 0, ypos, 1.3f, (float)HorizontalResolution / 256.0f, vscale * 0.5f);
-		//Draw Sonic
+		// Draw Sonic
 		xpos = center_x - 320.0f * vscale - (128.0f - sonic_xoffset) * vscale;
 		ypos = center_y - 260.0f * vscale;
 		if (v1 >= 60)
 		{
-			if (sonic_xoffset > 63) sonic_xoffset -= 64; else sonic_xoffset = 0;
+			if (sonic_xoffset > 63) 
+				sonic_xoffset -= 64; 
+			else 
+				sonic_xoffset = 0;
 		}
 		int sonictex = 0;
 		for (int v = 0; v < 4; v++)
@@ -135,7 +141,7 @@ void DrawTitleScreenShit_cdecl(TitleScreenData* a1)
 				sonictex++;
 			}
 		}
-		//Draw logo
+		// Draw logo
 		njSetTexture(&ava_gtitle0_e_TEXLIST);
 		xpos = center_x - (171.0f + logo_xoffset) * vscale;
 		ypos = center_y - 143.0f * vscale;
@@ -164,9 +170,9 @@ void DrawTitleScreenShit_cdecl(TitleScreenData* a1)
 				if (logo_xoffset < -63) logo_xoffset += 64; else logo_xoffset = 0;
 			}
 		}
-		//Increase timer
+		// Increase timer
 		a1->dword30 += MissedFrames_B;
-		//Draw Press Start
+		// Draw Press Start
 		if (a1->dword24 >= 150)
 		{
 			PressStartTransparency = a1->dword28;

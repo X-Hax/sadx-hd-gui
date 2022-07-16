@@ -5,11 +5,14 @@
 #include <IniFile.hpp>
 #include "Common.h"
 
-NJS_TEXNAME TitleTexname[11];
-NJS_TEXLIST TitleTexlist = {arrayptrandlength(TitleTexname)};
+NJS_TEXNAME textures_obj_regular[100];
+NJS_TEXLIST texlist_obj_regular = { arrayptrandlength(textures_obj_regular) };
 
-NJS_TEXNAME TitleCmnTexname[70];
-NJS_TEXLIST TitleCmnTexlist = {arrayptrandlength(TitleCmnTexname)};
+NJS_TEXNAME ava_title_e_hd_textures[11];
+NJS_TEXLIST ava_title_e_hd_texlist = { arrayptrandlength(ava_title_e_hd_textures) };
+
+NJS_TEXNAME ava_title_cmn_hd_textures[70];
+NJS_TEXLIST ava_title_cmn_hd_texlist = { arrayptrandlength(ava_title_cmn_hd_textures) };
 
 void Subtitles_OnFrame();
 void Subtitles_Init(const char* path, const HelperFunctions& helperFunctions);
@@ -153,14 +156,6 @@ void DrawSprite_Hook(NJS_SPRITE *sp, Int n, Float pri, NJD_SPRITE attr, QueuedMo
 	njTextureShadingMode(2);
 }
 
-void GreenRect_Wrapper(float x, float y, float z, float width, float height)
-{
-	njTextureShadingMode(1);
-	GreenMenuRect_Draw(x, y, z, width, height);
-	njTextureShadingMode(2);
-}
-
-
 void DrawChnamBShit(Uint8 index)
 {
 	Direct3D_SetZFunc(index);
@@ -187,9 +182,12 @@ extern "C"
 		Tutorials_Init(path, helperFunctions);
 		Mission_Init(path, helperFunctions);
 		if (GetModuleHandle(L"DCMods_Main") != nullptr)
+		{
 			TexturesDC_Init(path, helperFunctions); // Texture replacements for DC Conversion
-		// Fix green rectangle in tutorials
-		WriteCall((void*)0x0064393E, GreenRect_Wrapper);
+			// Temporary hack until the new update is released
+			helperFunctions.ReplaceFile("system\\OBJ_REGULAR.PVM", "system\\OBJ_REGULAR_DC.PVM"); 
+			OBJ_REGULAR_TEXLIST = texlist_obj_regular;
+		}
 		// Fix random ring icon
 		WriteData((NJS_TEXANIM**)0x004C03FF, &RandomRingIconPart_TEXANIM);
 		// Various fixes
@@ -422,12 +420,7 @@ extern "C"
 		f640_Fixed = 1.0f + HorizontalResolution;
 		WriteData((float**)0x00433385, &f480_Fixed); // Screen fade resolution
 		WriteData((float**)0x004333A6, &f640_Fixed); // Screen fade resolution
-		WriteData((float*)0x004333A0, -1.0f); // Screen fade for tutorials
-		WriteData((float*)0x004333AE, -1.0f); // Screen fade for tutorials
 		WriteCall((void*)0x0042BF52, ScreenFadeFix);
-		WriteData<5>((void*)0x0040BE0D, 0x90); // Disable "Now loading..."
-		WriteData<5>((void*)0x00503438, 0x90); // Disable "Now loading..."
-		WriteData<5>((void*)0x0050346D, 0x90); // Disable "Now loading..."
 		// Character select screen fixes
 		WriteCall((void*)0x00511AD0, RetrievePlayerSelectStuff); // Player select text in character select screen
 		WriteCall((void*)0x00511C76, RetrieveBottomThingStuff); // Bottom thing in character select screen
@@ -450,8 +443,8 @@ extern "C"
 		// Fixes for the question mark in the Character Select menu
 		((NJS_OBJECT*)0x010D7774)->basicdxmodel->mats[0].diffuse.color = 0xFFB2B2B2;
 		((NJS_OBJECT*)0x010D7774)->basicdxmodel->mats[0].attr_texId = 10;
-		ava_title_e_TEXLIST = TitleTexlist; // Added Internet option
-		ava_title_cmn_TEXLIST = TitleCmnTexlist;
+		ava_title_e_TEXLIST = ava_title_e_hd_texlist; // Added Internet option
+		ava_title_cmn_TEXLIST = ava_title_cmn_hd_texlist;
 		WriteCall((void*)0x005092A1, FileIcon_Hook); // File icon
 	}
 

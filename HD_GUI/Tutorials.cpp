@@ -9,8 +9,19 @@ float PadManuYOffset = 136.0f;
 float PadManuYOffset2 = 105.0f;
 float PadManuYMultiplier = 1.0f;
 
+void GreenRect_Wrapper(float x, float y, float z, float width, float height)
+{
+	njTextureShadingMode(1);
+	GreenMenuRect_Draw(x, y, z, width, height);
+	njTextureShadingMode(2);
+}
+
 void Tutorials_Init(const char* path, const HelperFunctions& helperFunctions)
 {
+	// Fix green rectangle in tutorials
+	WriteCall((void*)0x0064393E, GreenRect_Wrapper);
+	WriteData((float*)0x004333A0, -1.0f); // Screen fade for tutorials
+	WriteData((float*)0x004333AE, -1.0f); // Screen fade for tutorials
 	// PVMs
 	ReplacePVMX("TUTO_CMN");
 	ReplacePVMX("TUTO_CMN_E");
