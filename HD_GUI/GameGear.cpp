@@ -7,6 +7,7 @@ DataPointer(NJS_TEXLIST, GG_TEXLIST_TEXLIST, 0x339CC44);
 
 static float HorizontalResolution_Float = 640.0f;
 
+// Recreates background textures for the Mini Game Collection in widescreen.
 void GenerateGameGearBackground()
 {
 	HorizontalResolution_Float = (float)HorizontalResolution;
@@ -119,5 +120,5 @@ void GameGear_Init()
 	WriteData((float**)0x006FF632, &VerticalStretch);
 	WriteData((float**)0x006FF657, &VerticalStretch);
 	WriteData((float**)0x006FF4B1, &HorizontalResolution_Float);
-	WriteCall((void*)0x6FF662, DrawHoneycomb);
+	WriteCall((void*)0x006FF662, DrawHoneycomb);
 }
