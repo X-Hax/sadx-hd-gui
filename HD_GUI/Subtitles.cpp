@@ -1,7 +1,18 @@
 #include <SADXModLoader.h>
-#include "SubtitleData.h"
 #include <IniFile.hpp>
 #include <Trampoline.cpp>
+#include "TextData.h"
+#include "ChaoFonts.h"
+
+unsigned __int16 SubtitleArray[256];
+TextLine RecapArray[256];
+TextLine RaceEntryMessageBar[5];
+float SubtitleSpacing = 6.0f;
+
+//Pointers
+FunctionPointer(void, DoTextThing_Start, (SubtitleThing* a1), 0x40D850);
+FunctionPointer(void, DoTextThing_Stop, (SubtitleThing* a1), 0x40D2A0);
+DataPointer(int, RecapScreenMode, 0x3C8308C);
 
 //Subtitle/recap stuff
 static float RecapScreenY = 0;
@@ -19,7 +30,15 @@ static int RecapFontColorR = 255;
 static int RecapFontColorG = 255;
 static int RecapFontColorB = 255;
 static float RecapSpacing = 5.0f;
-static float SubtitleSpacing = 6.0f;
+
+// Chao stuff
+FunctionPointer(void, AlMsgFontDraw, (SAlMsgFontStr* self, float ox, float oy, float z), 0x724AC0);
+FunctionPointer(void, AlMsgTelopAddLineC, (SAlMsgTelop* a2, const char* cstr, int ja), 0x769B00);
+void ClearTextArray(unsigned __int16* array);
+int ParseCharacters(unsigned __int16 arr[], const char* str);
+void DrawCharacter(NJS_SPRITE* sprite, unsigned __int16 index, char mode, float parameter);
+
+int NumOfMessageBarLines = 0;
 
 int GetTexidForCodepage(unsigned __int16 character)
 {
@@ -91,8 +110,8 @@ void DrawCharacter(NJS_SPRITE* sprite, unsigned __int16 index, char mode, float 
 			if (finalscale < 0.28f) finalscale = 0;
 			uvdif = SubtitleFont[character].v2 - SubtitleFont[character].v1;
 			SubtitleFont[character].v2 = SubtitleFont[character].v1 + int((float)uvdif * finalscale);
-			SubtitleFont[character].sy = int(64.0f* finalscale);
-			sprite->sy = scale_bk * (float(SubtitleFont[character].sy)/64.0f);
+			SubtitleFont[character].sy = int(64.0f * finalscale);
+			sprite->sy = scale_bk * (float(SubtitleFont[character].sy) / 64.0f);
 			//PrintDebug("Scale: %f, sy: %f, texsy: %d, v2:%d \n", finalscale, sprite->sy, SubtitleFont[character].sy, SubtitleFont[character].v2);
 		}
 	}
@@ -145,10 +164,69 @@ void ClearTextArray(unsigned __int16* array)
 	}
 }
 
+int ParseCharacters(unsigned __int16 arr[], const char* str)
+{
+	unsigned __int16 character = 0;
+	int result = 0;
+	for (int i = 0; i < strlen(str); i++)
+	{
+		//Here's a bunch of hardcoded Japanese characters because the game uses it in English too and because I'm tired of this shit
+		if (TextLanguage && str[i] == 0xFFFFFF81)
+		{
+			//Square
+			if (str[i + 1] == 0xFFFFFFA1)
+			{
+				AddSubtitleCharacter(arr, 0x01);
+			}
+			//...
+			if (str[i + 1] == 0x63)
+			{
+				AddSubtitleCharacter(arr, 0x2);
+			}
+			//'
+			if (str[i + 1] == 0x65)
+			{
+				AddSubtitleCharacter(arr, 0x27);
+			}
+			//!
+			if (str[i + 1] == 0x49)
+			{
+				AddSubtitleCharacter(arr, 0x21);
+			}
+			//?
+			if (str[i + 1] == 0x48)
+			{
+				AddSubtitleCharacter(arr, 0x3F);
+			}
+			//Skip the next character because it's zenkaku
+			AddSubtitleCharacter(arr, 0x20);
+			i++;
+			result++;
+		}
+		//Read as zenkaku
+		else if (!TextLanguage && str[i] & 0xFFFFFF00)
+		{
+			character = 0x100 * (str[i] & 0xFF) + abs(str[i + 1] & 0xFF);
+			//PrintDebug("%X ", character);
+			i++;
+			AddSubtitleCharacter(arr, character);
+			result++;
+		}
+		//Read as hankaku
+		else
+		{
+			character = str[i] & 0xFF;
+			//PrintDebug("%X ", character);
+			AddSubtitleCharacter(arr, character);
+			result++;
+		}
+	}
+	return result;
+}
+
 void ParseSubtitle(const char* string)
 {
 	unsigned __int16* array = nullptr;
-	unsigned __int16 character = 0;
 
 	if (ListenToRecap == 1)
 	{
@@ -170,56 +248,7 @@ void ParseSubtitle(const char* string)
 	}
 	PrintDebug("Text string end\n");
 	*/
-	for (int i = 0; i < strlen(string); i++)
-	{
-		//Here's a bunch of hardcoded Japanese characters because the game uses it in English too and because I'm tired of this shit
-		if (TextLanguage && string[i] == 0xFFFFFF81)
-		{
-			//Square
-			if (string[i + 1] == 0xFFFFFFA1)
-			{
-				AddSubtitleCharacter(array, 0x01);
-			}
-			//...
-			if (string[i + 1] == 0x63)
-			{
-				AddSubtitleCharacter(array, 0x2);
-			}
-			//'
-			if (string[i + 1] == 0x65)
-			{
-				AddSubtitleCharacter(array, 0x27);
-			}
-			//!
-			if (string[i + 1] == 0x49)
-			{
-				AddSubtitleCharacter(array, 0x21);
-			}
-			//?
-			if (string[i + 1] == 0x48)
-			{
-				AddSubtitleCharacter(array, 0x3F);
-			}
-			//Skip the next character because it's zenkaku
-			AddSubtitleCharacter(array, 0x20);
-			i++;
-		}
-		//Read as zenkaku
-		else if (!TextLanguage && string[i] & 0xFFFFFF00)
-		{
-			character = 0x100 * (string[i] & 0xFF) + abs(string[i + 1] & 0xFF);
-			//PrintDebug("%X ", character);
-			i++;
-			AddSubtitleCharacter(array, character);
-		}
-		//Read as hankaku
-		else
-		{
-			character = string[i] & 0xFF;
-			//PrintDebug("%X ", character);
-			AddSubtitleCharacter(array, character);
-		}
-	}
+	int numchars = ParseCharacters(array, string);
 	//Calculate recap line length
 	if (ListenToRecap == 1)
 	{
@@ -656,8 +685,104 @@ void MissionWindowHook(float pos_x, float pos_y, float pos_z, float width, float
 	MissionScreenScale = pos_y+height;
 }
 
+
+void __cdecl MessageBarDrawHook(SAlMsgTelop* a1)
+{
+	unsigned __int16* MessageBarArray = RaceEntryMessageBar[0].LineString_S;
+	NJS_SPRITE SubtitleCharacterSprite = {{ 0, 0, 0 }, 0.4f, 0.4f, 0, &SubtitleTexlist, SubtitleFont};
+	float scaled320 = 320.0f;
+	scaled320 = HorizontalResolution / 2.0f;
+	//Calculate newlines
+	float HorizontalOffset_Initial = 0;
+	float HorizontalOffset_Current = 0;
+	float VerticalOffset = 0;
+	int LineStart = 0;
+	//Set subtitle position and texlist
+	SubtitleCharacterSprite.p.x = a1->mPosX;
+	SubtitleCharacterSprite.p.y = a1->mPosY;
+	//Set font scale - for Mission Stat screen it needs to be smaller to fit mission descriptions into the small frame
+	if (MissionScreenState)
+	{
+		SubtitleCharacterSprite.sx = 0.28f;
+		SubtitleCharacterSprite.sy = 0.28f;
+	}
+	else
+	{
+		SubtitleCharacterSprite.sx = 0.4f;
+		SubtitleCharacterSprite.sy = 0.4f;
+	}
+	for (int i = 0; i < RaceEntryMessageBar[0].LineLength; i++)
+	{
+		if (MessageBarArray[i] == 0) break;
+		//If not newline or spacing, draw the character
+		if (MessageBarArray[i] != 0x0A && MessageBarArray[i] != 0x09 && MessageBarArray[i] != 0x07 && MessageBarArray[i] != 0i8)
+		{
+			//Add spacing in English and other languages
+			if (TextLanguage && i != 0) HorizontalOffset_Current += SubtitleCharacterSprite.sx * (FontCharacterData[MessageBarArray[max(0, i - 1)] & 0xFF].width + FontCharacterData[MessageBarArray[i] & 0xFF].offset_x + SubtitleSpacing);
+			//PrintDebug("Letter %d, width %d, hz:%f\n", MessageBarArray[i] & 0xFF, FontCharacterData[MessageBarArray[i] & 0xFF].width, HorizontalOffset_Current);
+			SubtitleCharacterSprite.p.x = HorizontalOffset_Initial + HorizontalOffset_Current;
+			if (TextLanguage) SubtitleCharacterSprite.p.y = a1->mPosY + VerticalOffset + SubtitleCharacterSprite.sx * (FontCharacterData[MessageBarArray[i] & 0xFF].offset_y);
+			else SubtitleCharacterSprite.p.y = a1->mPosY + VerticalOffset;
+			PrintDebug("Drawing");
+			DrawCharacter(&SubtitleCharacterSprite, MessageBarArray[i], 3, 0);
+			//Add fixed spacing in Japanese
+			if (!TextLanguage) HorizontalOffset_Current += SubtitleCharacterSprite.sx * 64;
+		}
+		else if (MessageBarArray[i] == 0x0A)
+		{
+			VerticalOffset += 68.0f * SubtitleCharacterSprite.sx;
+			HorizontalOffset_Current = 0;
+			LineStart = i + 1;
+		}
+	}
+}
+
+void AddMessageBarLine(const char* str)
+{
+	ClearTextArray(RaceEntryMessageBar[NumOfMessageBarLines].LineString_S);
+	RaceEntryMessageBar[NumOfMessageBarLines].LineLength = ParseCharacters(RaceEntryMessageBar[NumOfMessageBarLines].LineString_S, str);
+	PrintDebug("Add:\n");
+	for (int i = 0; i < RaceEntryMessageBar[NumOfMessageBarLines].LineLength; i++)
+	{
+		PrintDebug("%d ", RaceEntryMessageBar[NumOfMessageBarLines].LineString_S[i]);
+	}
+	PrintDebug("\n");
+	NumOfMessageBarLines++;
+}
+
+void MessageBarHook(SAlMsgTelop* a2, const char* cstr, int ja)
+{
+	AlMsgTelopAddLineC(a2, cstr, ja);
+	AddMessageBarLine(cstr);
+}
+
+/*
+static void MessageBar_Clear_r();
+static Trampoline MessageBar_Clear_t(0x749460, 0x749465, MessageBar_Clear_r);
+static void __cdecl MessageBar_Clear_r()
+{
+	auto original = reinterpret_cast<decltype(MessageBar_Clear_r)*>(MessageBar_Clear_t.Target());
+	original();
+	PrintDebug("Message bar cleared\n");
+}
+*/
+
+static void ChaoStgEntrance_Main_r(ObjectMaster *a1);
+static Trampoline ChaoStgEntrance_Main_t(0x719880, 0x719889, ChaoStgEntrance_Main_r);
+static void __cdecl ChaoStgEntrance_Main_r(ObjectMaster* a1)
+{
+	auto original = reinterpret_cast<decltype(ChaoStgEntrance_Main_r)*>(ChaoStgEntrance_Main_t.Target());
+	LoadPVM("SUBTITLE", &SubtitleTexlist);
+	LoadPVM("SUBTITLE_JP", &SubtitleJPTexlist);
+	original(a1);
+	PrintDebug("Ass");
+}
+
 void Subtitles_Init(const char* path, const HelperFunctions& helperFunctions)
 {
+	//Chao
+	WriteCall((void*)0x7494B0, MessageBarHook);
+	WriteJump((void*)0x749382, MessageBarDrawHook);
 	//Subtitle hooks
 	WriteCall((void*)0x6431D3, MissionWindowHook);
 	//Disable all the stuff that sets up the "Now saving" text but nothing else

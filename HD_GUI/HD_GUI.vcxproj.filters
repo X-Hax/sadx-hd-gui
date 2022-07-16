@@ -27,13 +27,16 @@
     <ClInclude Include="TutorialStuff.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SubtitleData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TitleScreenData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameGear.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChaoFonts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

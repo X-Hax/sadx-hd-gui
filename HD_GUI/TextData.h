@@ -1,7 +1,6 @@
 #pragma once
 
-//Structs
-
+// Structs
 struct SubtitleCodepage
 {
 	int StartChar;
@@ -48,13 +47,14 @@ struct TextLine
 	unsigned __int16 LineString_S[256];
 };
 
-//Pointers
-FunctionPointer(void, DoTextThing_Start, (SubtitleThing *a1), 0x40D850);
-FunctionPointer(void, DoTextThing_Stop, (SubtitleThing *a1), 0x40D2A0);
-DataPointer(int, RecapScreenMode, 0x3C8308C);
+//Misc
+NJS_TEXNAME SubtitleTexname[1];
+NJS_TEXLIST SubtitleTexlist = {arrayptrandlength(SubtitleTexname)};
 
-//Arrays
-static NJS_TEXANIM SubtitleFont[] = {
+NJS_TEXNAME SubtitleJPTexname[44];
+NJS_TEXLIST SubtitleJPTexlist = {arrayptrandlength(SubtitleJPTexname)};
+
+NJS_TEXANIM SubtitleFont[] = {
 { 64, 64, 0, 0, 0, 0, 15, 15, 0, 0 },
 { 64, 64, 0, 0, 15, 0, 31, 15, 0, 0 },
 { 64, 64, 0, 0, 31, 0, 47, 15, 0, 0 },
@@ -313,9 +313,9 @@ static NJS_TEXANIM SubtitleFont[] = {
 { 64, 64, 0, 0, 239, 239, 255, 255, 0, 0 },
 };
 
-static FontOffset FontCharacterData[] =
+FontOffset FontCharacterData[] =
 {
-{0, 0, 0}, 
+{0, 0, 0},
 {0, 0, 0},
 {40, 0, 0}, //Japanese ...
 {0, 0, 0},
@@ -574,20 +574,9 @@ static FontOffset FontCharacterData[] =
 {32, 0, 0}
 };
 
-//Misc
-NJS_TEXNAME SubtitleTexname[1];
-NJS_TEXLIST SubtitleTexlist = { arrayptrandlength(SubtitleTexname) };
-
-NJS_TEXNAME SubtitleJPTexname[44];
-NJS_TEXLIST SubtitleJPTexlist = {arrayptrandlength(SubtitleJPTexname)};
-
-PVMEntry SubtitlePVMEntry = { "SUBTITLE", (TexList *)&SubtitleTexlist };
+PVMEntry SubtitlePVMEntry = {"SUBTITLE", (TexList*)&SubtitleTexlist};
 
 PVMEntry SubtitleJPPVMEntry = {"SUBTITLE_JP", (TexList*)&SubtitleJPTexlist};
-
-unsigned __int16 SubtitleArray[256];
-TextLine RecapArray[256];
-TextLine MissionArray[256];
 
 SubtitleCodepage JapaneseSubtitleCodepage[] = {
 	{ 0x8140, 0 },
