@@ -169,10 +169,10 @@ extern "C"
 	{
 		char pathbuf[MAX_PATH];
 		// Warnings
-		if (helperFunctions.Version < 6)
+		if (helperFunctions.Version < 12)
 		{
 			MessageBox(WindowHandle,
-				L"Mod Loader out of date. HD GUI requires API version 6 or newer.",
+				L"Mod Loader out of date. HD GUI requires API version 12 or newer.",
 				L"HD GUI error: Mod loader out of date", MB_OK | MB_ICONERROR);
 			return;
 		}
