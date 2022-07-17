@@ -95,7 +95,6 @@
     <ClCompile Include="Mission.cpp" />
     <ClCompile Include="mod.cpp" />
     <ClCompile Include="Subtitles.cpp" />
-    <ClCompile Include="TexturesDC.cpp" />
     <ClCompile Include="TitleScreen.cpp" />
     <ClCompile Include="Tutorials.cpp" />
   </ItemGroup>

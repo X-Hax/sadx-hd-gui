@@ -19,8 +19,6 @@ void Subtitles_Init(const char* path, const HelperFunctions& helperFunctions);
 
 void Mission_Init(const char* path, const HelperFunctions& helperFunctions);
 
-void TexturesDC_Init(const char* path, const HelperFunctions& helperFunctions);
-
 void Tutorials_Init(const char* path, const HelperFunctions& helperFunctions);
 void Tutorials_OnFrame();
 
@@ -181,10 +179,9 @@ extern "C"
 		Subtitles_Init(path, helperFunctions);
 		Tutorials_Init(path, helperFunctions);
 		Mission_Init(path, helperFunctions);
+		// Temporary hack until the new update for DC Conversion is released
 		if (GetModuleHandle(L"DCMods_Main") != nullptr)
 		{
-			TexturesDC_Init(path, helperFunctions); // Texture replacements for DC Conversion
-			// Temporary hack until the new update is released
 			helperFunctions.ReplaceFile("system\\OBJ_REGULAR.PVM", "system\\OBJ_REGULAR_DC.PVM"); 
 			OBJ_REGULAR_TEXLIST = texlist_obj_regular;
 		}
