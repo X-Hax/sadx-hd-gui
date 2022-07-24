@@ -470,11 +470,25 @@ void DrawSubtitleHook(NJS_SPRITE* sp, Int n, Float pri, NJD_SPRITE attr, QueuedM
 	}
 	else
 	{
-		SubtitleCharacterSprite.sx = 0.4f;
-		SubtitleCharacterSprite.sy = 0.4f;
+		if (!TextLanguage)
+		{
+			SubtitleCharacterSprite.sx = 0.44f;
+			SubtitleCharacterSprite.sy = 0.44f;
+		}
+		else
+		{
+			SubtitleCharacterSprite.sx = 0.4f;
+			SubtitleCharacterSprite.sy = 0.4f;
+		}
 	}
 	for (unsigned int i = 0; i < LengthOfArray(SubtitleArray); i++)
 	{
+		bool japanese = SubtitleArray[i] >= 0x8000;
+		// Offset kana and kanji
+		if (VerticalOffset == 0.0f)
+			VerticalOffset -= japanese * 4.0f;
+		if (HorizontalOffset_Current == 0.0f)
+			HorizontalOffset_Current -= japanese * 16.0f;
 		if (SubtitleArray[i] == 0) break;
 		// Calculate horizontal centering
 		if (MissionScreenState) HorizontalOffset_Initial = 7.0f * 32.0f * SubtitleCharacterSprite.sx;
@@ -495,20 +509,23 @@ void DrawSubtitleHook(NJS_SPRITE* sp, Int n, Float pri, NJD_SPRITE attr, QueuedM
 		// If not newline or spacing, draw the character
 		if (SubtitleArray[i] != 0x0A && SubtitleArray[i] != 0x09 && SubtitleArray[i] != 0x07 && SubtitleArray[i] != 0i8)
 		{
-			// Add spacing in English and other languages
-			if (TextLanguage && i != 0) 
-				HorizontalOffset_Current += SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleArray[max(0, i - 1)] & 0xFF].width + FontCharacterData[SubtitleArray[i] & 0xFF].offset_x + SubtitleSpacing);
+			// Add spacing
+			if (i != 0)
+			{
+				if (!japanese)
+					HorizontalOffset_Current += SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleArray[max(0, i - 1)] & 0xFF].width + FontCharacterData[SubtitleArray[i] & 0xFF].offset_x + SubtitleSpacing);
+				else
+					HorizontalOffset_Current += SubtitleCharacterSprite.sx * 60;
+			}
 			//PrintDebug("Letter %d, width %d, hz:%f\n", SubtitleArray[i] & 0xFF, FontCharacterData[SubtitleArray[i] & 0xFF].width, HorizontalOffset_Current);
 			SubtitleCharacterSprite.p.x = HorizontalOffset_Initial + HorizontalOffset_Current;
-			if (TextLanguage) 
+			if (!japanese)
 				SubtitleCharacterSprite.p.y = sp->p.y + VerticalOffset + SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleArray[i] & 0xFF].offset_y);
 			else 
 				SubtitleCharacterSprite.p.y = sp->p.y + VerticalOffset;
 			DrawCharacter(&SubtitleCharacterSprite, SubtitleArray[i], 0, 0);
-			// Add fixed spacing in Japanese
-			if (!TextLanguage) 
-				HorizontalOffset_Current += SubtitleCharacterSprite.sx * 64;
 		}
+		// New line
 		else if (SubtitleArray[i] == 0x0A)
 		{
 			VerticalOffset += 68.0f * SubtitleCharacterSprite.sx;
