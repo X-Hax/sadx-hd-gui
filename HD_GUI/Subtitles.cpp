@@ -22,6 +22,41 @@ static int RecapFontColorB = 255;
 static float RecapSpacing = 5.0f;
 static float SubtitleSpacing = 6.0f;
 
+bool IsJapaneseCharacter(unsigned __int16 character)
+{
+	return character > 0x8000;
+}
+
+FontOffset const& GetFontCharacterData(unsigned __int16 character)
+{
+	// force space width to 30 in Japanese
+	if (!TextLanguage && character == 0x20) return JapaneseSpaceCharacterData;
+	else if (IsJapaneseCharacter(character)) return JapaneseCharacterData;
+	else return FontCharacterData[character];
+}
+
+float CalculateSpacingBetweenCharacters(unsigned __int16 character_a, unsigned __int16 character_b, float halfwidth_spacing, float fullwidth_spacing)
+{
+	if (IsJapaneseCharacter(character_a) || IsJapaneseCharacter(character_b)) return fullwidth_spacing;
+	else return halfwidth_spacing + FontCharacterData[character_b & 0xFF].offset_x;
+}
+
+float CalculateSpacingInArray(unsigned __int16* array, int next_character_index, float halfwidth_spacing, float fullwidth_spacing)
+{
+	if (next_character_index == 0) return 0;
+	else return CalculateSpacingBetweenCharacters(array[next_character_index - 1], array[next_character_index], halfwidth_spacing, fullwidth_spacing);
+}
+
+float CalculateRecapSpacing(unsigned __int16* array, int next_character_index)
+{
+	return CalculateSpacingInArray(array, next_character_index, RecapSpacing, 0);
+}
+
+float CalculateSubtitleSpacing(unsigned __int16* array, int next_character_index)
+{
+	return CalculateSpacingInArray(array, next_character_index, SubtitleSpacing, 4.0f);
+}
+
 int GetTexidForCodepage(unsigned __int16 character)
 {
 	for (unsigned int i = 0; i < LengthOfArray(JapaneseSubtitleCodepage); i++)
@@ -61,7 +96,7 @@ void DrawCharacter(NJS_SPRITE* sprite, unsigned __int16 index, char mode, float 
 		GlobalRecapAlphaForFadeout = 1.0f;
 	}
 	// Japanese
-	if (index > 0x8000)
+	if (IsJapaneseCharacter(index))
 	{
 		njSetTexture(&SubtitleJPTexlist);
 		sprite->tlist = &SubtitleJPTexlist;
@@ -206,7 +241,7 @@ void ParseSubtitle(const char* string)
 			i++;
 		}
 		// Read as zenkaku
-		else if (!TextLanguage && string[i] & 0xFFFFFF00)
+		else if (string[i] & 0xFFFFFF00)
 		{
 			character = 0x100 * (string[i] & 0xFF) + abs(string[i + 1] & 0xFF);
 			//PrintDebug("%X ", character);
@@ -224,25 +259,14 @@ void ParseSubtitle(const char* string)
 	// Calculate recap line length
 	if (ListenToRecap == ListenToRecapMode::Listen)
 	{
+		TextLine& LastRecapArray = RecapArray[NumberOfTextLines - 1];
 		for (int i = 0; i < 255; i++)
 		{
 			// Calculate the line's width in pixels (at 1.0x) with character spacing
 			if (array[i] == 0) break;
-			else
+			else if (array[i] != 0x07 && array[i] != 0x09)
 			{
-				// Spacing in English
-				if (TextLanguage)
-				{
-					if (array[i] != 0x07 && array[i] != 0x09)
-						RecapArray[NumberOfTextLines - 1].LineLength += (int)(FontCharacterData[RecapArray[NumberOfTextLines - 1].LineString_S[i] & 0xFF].width + RecapSpacing);
-				}
-				// Spacing in Japanese
-				else
-				{
-					if (array[i] == 0x20) RecapArray[NumberOfTextLines - 1].LineLength += 32; //Half width space
-					else if (array[i] != 0x07 && array[i] != 0x09)
-						RecapArray[NumberOfTextLines - 1].LineLength += 64;
-				}
+				LastRecapArray.LineLength += (int)(CalculateRecapSpacing(LastRecapArray.LineString_S, i) + GetFontCharacterData(LastRecapArray.LineString_S[i]).width);
 			}
 		}
 	}
@@ -340,10 +364,7 @@ int CalculateLineLength(int start_char)
 		}
 		else if (SubtitleArray[i] != 0x09 && SubtitleArray[i] != 0x07)
 		{
-			if (SubtitleArray[i] > 0x8000) 
-				result += 64;
-			else 
-				result += (int)(FontCharacterData[SubtitleArray[i] % 256].width + SubtitleSpacing);
+			result += (int)(CalculateSubtitleSpacing(SubtitleArray, i) + GetFontCharacterData(SubtitleArray[i]).width);
 		}
 	}
 	//PrintDebug("Line length for line starting at %d: %d\n", start_char, result);
@@ -379,11 +400,7 @@ float CalculateLongestLineLength()
 		}
 		else if (SubtitleArray[cursor] != 0x09 && SubtitleArray[cursor] != 0x07)
 		{
-			//Calculate different spacing for Japanese
-			if (SubtitleArray[cursor] > 0x8000) 
-				spaceadd = 64; 
-			else 
-				spaceadd = (int)(FontCharacterData[SubtitleArray[cursor] % 256].width + SubtitleSpacing);
+			spaceadd = (int)(CalculateSubtitleSpacing(SubtitleArray, cursor) + GetFontCharacterData(SubtitleArray[cursor]).width);
 			//Add spacing
 			switch (linenumber)
 			{
@@ -431,12 +448,7 @@ void DrawMissionTutorialTextHook(NJS_SPRITE* sp, Int n, Float pri, NJD_SPRITE at
 			if (i == 0) SubtitleCharacterSprite.p.x = OldOffsetX;
 			else
 			{
-				if (!TextLanguage)
-				{
-					if (RecapArray[u].LineString_S[i] == 0x20) SubtitleCharacterSprite.p.x = OldOffsetX + SubtitleCharacterSprite.sx * 32;
-					else SubtitleCharacterSprite.p.x = OldOffsetX + SubtitleCharacterSprite.sx * 60;
-				}
-				else SubtitleCharacterSprite.p.x = OldOffsetX + SubtitleCharacterSprite.sx * (FontCharacterData[RecapArray[u].LineString_S[max(0, i - 1)] & 0xFF].width + RecapSpacing + FontCharacterData[RecapArray[u].LineString_S[i] & 0xFF].offset_x);
+				SubtitleCharacterSprite.p.x = OldOffsetX + SubtitleCharacterSprite.sx * (GetFontCharacterData(RecapArray[u].LineString_S[i - 1]).width + CalculateRecapSpacing(RecapArray[u].LineString_S, i));
 			}
 			// Draw
 			if (RecapArray[u].LineString_S[i] != 0x0A && RecapArray[u].LineString_S[i] != 0x07 && RecapArray[u].LineString_S[i] != 0x09)
@@ -495,19 +507,13 @@ void DrawSubtitleHook(NJS_SPRITE* sp, Int n, Float pri, NJD_SPRITE attr, QueuedM
 		// If not newline or spacing, draw the character
 		if (SubtitleArray[i] != 0x0A && SubtitleArray[i] != 0x09 && SubtitleArray[i] != 0x07 && SubtitleArray[i] != 0i8)
 		{
-			// Add spacing in English and other languages
-			if (TextLanguage && i != 0) 
-				HorizontalOffset_Current += SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleArray[max(0, i - 1)] & 0xFF].width + FontCharacterData[SubtitleArray[i] & 0xFF].offset_x + SubtitleSpacing);
+			// Add spacing
+			if (i != 0)
+				HorizontalOffset_Current += SubtitleCharacterSprite.sx * (GetFontCharacterData(SubtitleArray[i - 1]).width + CalculateSubtitleSpacing(SubtitleArray, i));
 			//PrintDebug("Letter %d, width %d, hz:%f\n", SubtitleArray[i] & 0xFF, FontCharacterData[SubtitleArray[i] & 0xFF].width, HorizontalOffset_Current);
 			SubtitleCharacterSprite.p.x = HorizontalOffset_Initial + HorizontalOffset_Current;
-			if (TextLanguage) 
-				SubtitleCharacterSprite.p.y = sp->p.y + VerticalOffset + SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleArray[i] & 0xFF].offset_y);
-			else 
-				SubtitleCharacterSprite.p.y = sp->p.y + VerticalOffset;
+			SubtitleCharacterSprite.p.y = sp->p.y + VerticalOffset + SubtitleCharacterSprite.sx * GetFontCharacterData(SubtitleArray[i]).offset_y;
 			DrawCharacter(&SubtitleCharacterSprite, SubtitleArray[i], 0, 0);
-			// Add fixed spacing in Japanese
-			if (!TextLanguage) 
-				HorizontalOffset_Current += SubtitleCharacterSprite.sx * 64;
 		}
 		else if (SubtitleArray[i] == 0x0A)
 		{
@@ -539,10 +545,7 @@ void DrawSaveDeletedTextHook(NJS_TEXTURE_VTX* points, Int count, Uint32 gbix, In
 			SubtitleCharacterSprite.p.x = OldOffsetX;
 		else if (SubtitleArray[i] != 0x09)
 		{
-			if (TextLanguage) 
-				SubtitleCharacterSprite.p.x = OldOffsetX + SubtitleCharacterSprite.sx * (FontCharacterData[SubtitleArray[max(0, i - 1)] & 0xFF].width + SubtitleSpacing + FontCharacterData[SubtitleArray[i] & 0xFF].offset_x);
-			else 
-				SubtitleCharacterSprite.p.x = OldOffsetX + SubtitleCharacterSprite.sx * 64;
+			SubtitleCharacterSprite.p.x = OldOffsetX + SubtitleCharacterSprite.sx * (GetFontCharacterData(SubtitleArray[i - 1]).width + CalculateSubtitleSpacing(SubtitleArray, i));
 		}
 		// Set Y position
 		SubtitleCharacterSprite.p.y = points[0].y;
@@ -577,15 +580,10 @@ void DrawRecapTextHook(NJS_TEXTURE_VTX* points, Int count, Uint32 gbix, Int flag
 			if (i == 0) SubtitleCharacterSprite.p.x = OldOffsetX;
 			else
 			{
-				if (!TextLanguage)
-				{
-					if (RecapArray[u].LineString_S[i] == 0x20) SubtitleCharacterSprite.p.x = OldOffsetX + SubtitleCharacterSprite.sx * 32;
-					else SubtitleCharacterSprite.p.x = OldOffsetX + SubtitleCharacterSprite.sx * 64;
-				}
-				else SubtitleCharacterSprite.p.x = OldOffsetX + SubtitleCharacterSprite.sx * (FontCharacterData[RecapArray[u].LineString_S[max(0, i - 1)] & 0xFF].width + RecapSpacing + FontCharacterData[RecapArray[u].LineString_S[i] & 0xFF].offset_x);
+				SubtitleCharacterSprite.p.x = OldOffsetX + SubtitleCharacterSprite.sx * (GetFontCharacterData(RecapArray[u].LineString_S[i - 1]).width + CalculateRecapSpacing(RecapArray[u].LineString_S, i));
 			}
 			// Calculate Y position
-			if (!TextLanguage) OffsetY = 0; else OffsetY = SubtitleCharacterSprite.sx * (FontCharacterData[RecapArray[u].LineString_S[i] & 0xFF].offset_y);
+			OffsetY = SubtitleCharacterSprite.sx * GetFontCharacterData(RecapArray[u].LineString_S[i]).offset_y;
 			SubtitleCharacterSprite.p.y = (u * 40 + 118 + RecapScreenY) * ResolutionScale + OffsetY;
 			// Draw
 			DrawCharacter(&SubtitleCharacterSprite, RecapArray[u].LineString_S[i], 1, (SubtitleCharacterSprite.p.y - OffsetY) / ResolutionScale);

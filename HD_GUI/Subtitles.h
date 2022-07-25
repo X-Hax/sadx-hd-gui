@@ -581,6 +581,9 @@ static FontOffset FontCharacterData[] =
 {32, 0, 0}
 };
 
+static FontOffset JapaneseCharacterData = { 60, 0, 0 };
+static FontOffset JapaneseSpaceCharacterData = { 30, 0, 0 };
+
 // Misc
 NJS_TEXNAME SubtitleTexname[1];
 NJS_TEXLIST SubtitleTexlist = { arrayptrandlength(SubtitleTexname) };
