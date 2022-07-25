@@ -71,7 +71,17 @@ void DrawCharacter(NJS_SPRITE* sprite, unsigned __int16 index, char mode, float 
 	unsigned __int16 character = 0;
 	short texid = 0;
 	float FontAlpha = 1.0f;
-	float scale_bk = sprite->sy;
+	float pos_x_bk = sprite->p.x;
+	float pos_y_bk = sprite->p.y;
+	float scale_x_bk = sprite->sx;
+	float scale_y_bk = sprite->sy;
+	if (IsJapaneseCharacter(index))
+	{
+		sprite->p.x -= sprite->sx * 0.1f * 64;
+		sprite->p.y -= sprite->sy * 0.1f * 64;
+		sprite->sx *= 1.2f;
+		sprite->sy *= 1.1f;
+	}
 	int v2_bk = 0;
 	int uvdif = 0;
 	float dif = MissionScreenScale - sprite->p.y;
@@ -128,7 +138,7 @@ void DrawCharacter(NJS_SPRITE* sprite, unsigned __int16 index, char mode, float 
 			uvdif = SubtitleFont[character].v2 - SubtitleFont[character].v1;
 			SubtitleFont[character].v2 = SubtitleFont[character].v1 + int((float)uvdif * finalscale);
 			SubtitleFont[character].sy = int(64.0f* finalscale);
-			sprite->sy = scale_bk * (float(SubtitleFont[character].sy)/64.0f);
+			sprite->sy *= float(SubtitleFont[character].sy)/64.0f;
 			//PrintDebug("Scale: %f, sy: %f, texsy: %d, v2:%d \n", finalscale, sprite->sy, SubtitleFont[character].sy, SubtitleFont[character].v2);
 		}
 	}
@@ -156,8 +166,11 @@ void DrawCharacter(NJS_SPRITE* sprite, unsigned __int16 index, char mode, float 
 	{
 		SubtitleFont[character].sy = 64;
 		SubtitleFont[character].v2 = v2_bk;
-		sprite->sy = scale_bk;
 	}
+	sprite->p.x = pos_x_bk;
+	sprite->p.y = pos_y_bk;
+	sprite->sx = scale_x_bk;
+	sprite->sy = scale_y_bk;
 }
 
 void AddSubtitleCharacter(unsigned __int16* array, unsigned __int16 character)
