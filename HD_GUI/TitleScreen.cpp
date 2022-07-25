@@ -38,6 +38,7 @@ void DrawTitleScreenShit_cdecl(TitleScreenData* a1)
 		logo_xoffset = ((float)HorizontalResolution / vscale) + 256.0f;
 		logoback = false;
 	}
+	float sonic_and_logo_step = 128 * hzscale / vscale;
 	SetVtxColorB(0xFFFFFFFF);
 	njSetTexture(&ava_title_cmn_TEXLIST);
 	njTextureShadingMode(1); // Disable alpha rejection
@@ -125,8 +126,8 @@ void DrawTitleScreenShit_cdecl(TitleScreenData* a1)
 		ypos = center_y - 260.0f * vscale;
 		if (v1 >= 60)
 		{
-			if (sonic_xoffset > 63) 
-				sonic_xoffset -= 64; 
+			if (sonic_xoffset > sonic_and_logo_step - 1)
+				sonic_xoffset -= sonic_and_logo_step;
 			else 
 				sonic_xoffset = 0;
 		}
@@ -159,7 +160,7 @@ void DrawTitleScreenShit_cdecl(TitleScreenData* a1)
 		{
 			if (!logoback)
 			{
-				if (logo_xoffset > -128) logo_xoffset -= 64;
+				if (logo_xoffset > -sonic_and_logo_step) logo_xoffset -= sonic_and_logo_step;
 				else
 				{
 					logoback = true;
@@ -167,7 +168,7 @@ void DrawTitleScreenShit_cdecl(TitleScreenData* a1)
 			}
 			else
 			{
-				if (logo_xoffset < -63) logo_xoffset += 64; else logo_xoffset = 0;
+				if (logo_xoffset < -(sonic_and_logo_step - 1)) logo_xoffset += sonic_and_logo_step; else logo_xoffset = 0;
 			}
 		}
 		// Increase timer
