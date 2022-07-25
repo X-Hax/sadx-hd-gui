@@ -22,6 +22,9 @@ static int RecapFontColorB = 255;
 static float RecapSpacing = 5.0f;
 static float SubtitleSpacing = 6.0f;
 
+static FontOffset JapaneseCharacterData = { 60, 0, 0 };
+static FontOffset JapaneseSpaceCharacterData = { 32, 0, 0 };
+
 bool IsJapaneseCharacter(unsigned __int16 character)
 {
 	return character > 0x8000;
@@ -29,7 +32,7 @@ bool IsJapaneseCharacter(unsigned __int16 character)
 
 FontOffset const& GetFontCharacterData(unsigned __int16 character)
 {
-	// force space width to 30 in Japanese
+	// force space width to 32 in Japanese
 	if (!TextLanguage && character == 0x20) return JapaneseSpaceCharacterData;
 	else if (IsJapaneseCharacter(character)) return JapaneseCharacterData;
 	else return FontCharacterData[character];
@@ -54,7 +57,7 @@ float CalculateRecapSpacing(unsigned __int16* array, int next_character_index)
 
 float CalculateSubtitleSpacing(unsigned __int16* array, int next_character_index)
 {
-	return CalculateSpacingInArray(array, next_character_index, SubtitleSpacing, 4.0f);
+	return CalculateSpacingInArray(array, next_character_index, SubtitleSpacing, 5.0f);
 }
 
 int GetTexidForCodepage(unsigned __int16 character)
