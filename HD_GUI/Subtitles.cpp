@@ -222,7 +222,7 @@ void ParseSubtitle(const char* string)
 	for (unsigned int i = 0; i < strlen(string); i++)
 	{
 		// Here's a bunch of hardcoded Japanese characters because the game uses it in English too and because I'm tired of this shit
-		if (TextLanguage && string[i] == 0xFFFFFF81)
+		if (TextLanguage == 1 && string[i] == 0xFFFFFF81)
 		{
 			// Square
 			if (string[i + 1] == 0xFFFFFFA1)
@@ -254,7 +254,7 @@ void ParseSubtitle(const char* string)
 			i++;
 		}
 		// Read as zenkaku
-		else if (string[i] & 0xFFFFFF00)
+		else if (TextLanguage <= 1 && string[i] & 0xFFFFFF00)
 		{
 			character = 0x100 * (string[i] & 0xFF) + abs(string[i + 1] & 0xFF);
 			//PrintDebug("%X ", character);
