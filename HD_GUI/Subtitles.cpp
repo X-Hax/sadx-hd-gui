@@ -35,7 +35,7 @@ FontOffset const& GetFontCharacterData(unsigned __int16 character)
 	// force space width to 32 in Japanese
 	if (!TextLanguage && character == 0x20) return JapaneseSpaceCharacterData;
 	else if (IsJapaneseCharacter(character)) return JapaneseCharacterData;
-	else return FontCharacterData[character];
+	else return FontCharacterData[character & 0xFF];
 }
 
 float CalculateSpacingBetweenCharacters(unsigned __int16 character_a, unsigned __int16 character_b, float halfwidth_spacing, float fullwidth_spacing)
@@ -66,6 +66,7 @@ int GetTexidForCodepage(unsigned __int16 character)
 	{
 		if (character >= JapaneseSubtitleCodepage[i].StartChar && character <= JapaneseSubtitleCodepage[i].StartChar + 255) return i;
 	}
+	return 0;
 }
 
 void DrawCharacter(NJS_SPRITE* sprite, unsigned __int16 index, char mode, float parameter)
