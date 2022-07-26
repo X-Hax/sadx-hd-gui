@@ -153,7 +153,7 @@ void DrawCharacter(NJS_SPRITE* sprite, unsigned __int16 index, char mode, float 
 		else SetMaterialAndSpriteColor_Float(GlobalSpriteColor.a, 0, 0, 0);
 		sprite->p.x += SubtitleShadowX;
 		sprite->p.y += SubtitleShadowY;
-		if (mode != 3) njDrawSprite2D_DrawNow(sprite, character, depth, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+		if (mode != 3 || !TextLanguage) njDrawSprite2D_DrawNow(sprite, character, depth, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 		else njDrawSprite2D_Queue(sprite, character, -1.15f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, (QueuedModelFlagsB)0);
 		sprite->p.x -= SubtitleShadowX;
 		sprite->p.y -= SubtitleShadowY;
@@ -163,7 +163,8 @@ void DrawCharacter(NJS_SPRITE* sprite, unsigned __int16 index, char mode, float 
 	if (mode) SetMaterialAndSpriteColor_Float(max(0, FontAlpha * GlobalRecapAlphaForFadeout), max(0, GlobalRecapAlphaForFadeout * RecapFontColorR / 255.0f), max(0, GlobalRecapAlphaForFadeout * RecapFontColorG / 255.0f), max(0, GlobalRecapAlphaForFadeout * RecapFontColorB / 255.0f));
 	else SetMaterialAndSpriteColor_Float(GlobalSpriteColor.a, SubtitleFontColorR / 255.0f, SubtitleFontColorG / 255.0f, SubtitleFontColorB / 255.0f);
 	//SetMaterialAndSpriteColor_Float(1, 1, 1, 1);
-	if (mode != 3) njDrawSprite2D_DrawNow(sprite, character, depth, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+	// Japanese mission tutorial text should be drawn immediately to avoid overriding texture ids by next characters
+	if (mode != 3 || !TextLanguage) njDrawSprite2D_DrawNow(sprite, character, depth, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 	else njDrawSprite2D_Queue(sprite, character, -1.15f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, (QueuedModelFlagsB)0);
 	// Remove transformations
 	if (mode == 3)
