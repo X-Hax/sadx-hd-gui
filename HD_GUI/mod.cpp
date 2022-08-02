@@ -167,10 +167,10 @@ extern "C"
 	{
 		char pathbuf[MAX_PATH];
 		// Warnings
-		if (helperFunctions.Version < 12)
+		if (helperFunctions.Version < 13)
 		{
 			MessageBox(WindowHandle,
-				L"Mod Loader out of date. HD GUI requires API version 12 or newer.",
+				L"Mod Loader out of date. HD GUI requires API version 13 or newer.",
 				L"HD GUI error: Mod loader out of date", MB_OK | MB_ICONERROR);
 			return;
 		}
@@ -188,6 +188,7 @@ extern "C"
 		// Fix random ring icon
 		WriteData((NJS_TEXANIM**)0x004C03FF, &RandomRingIconPart_TEXANIM);
 		// Various fixes
+		WriteData<1>((char*)0x913122, 0x45); // Offset sprite UV for the Adventure Field ring count to fix artifacts
 		WriteCall((void*)0x00457F2F, DrawSprite_Hook);
 		WriteCall((void*)0x00504DC4, HelpAvaSquareThing);
 		WriteCall((void*)0x0050717E, ScaleCharselJapaneseText_LikeSeriouslyWTF);

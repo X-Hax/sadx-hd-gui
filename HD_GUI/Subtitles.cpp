@@ -717,6 +717,9 @@ void Subtitles_Init(const char* path, const HelperFunctions& helperFunctions)
 	// Add subtitle texlist to common object textures
 	helperFunctions.RegisterCommonObjectPVM(SubtitlePVMEntry);
 	helperFunctions.RegisterCommonObjectPVM(SubtitleJPPVMEntry);
+	// Blacklist subtitle global indices in mipmap generation to speed up loading
+	for (Uint32 i= 3489688888; i< 3489688932;i++)
+		helperFunctions.MipmapBlacklistGBIX(i);
 	// Load fontdata settings
 	const std::string s_path(path);
 	const std::string s_config_ini(helperFunctions.GetReplaceablePath("SYSTEM\\fontdata.ini"));
