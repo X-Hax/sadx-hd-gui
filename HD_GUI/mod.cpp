@@ -44,7 +44,7 @@ void GenerateGameGearBackground();
 } while (0)
 
 static float Options_ArrowScale = 0.0f;
-static float Options_ArrowScaleAmount = 0.1f;
+static Angle Options_ArrowAngle = 0;
 
 static int PSInt = 0;
 static int BSInt = 0;
@@ -453,11 +453,8 @@ extern "C"
 
 		if (GameMode == GameModes_Menu)
 		{
-			if (Options_ArrowScale > 0.5f) 
-				Options_ArrowScaleAmount = -0.02f;
-			if (Options_ArrowScale < 0.0f) 
-				Options_ArrowScaleAmount = 0.02f;
-			Options_ArrowScale = Options_ArrowScale + Options_ArrowScaleAmount;
+			Options_ArrowScale += njSin(Options_ArrowAngle) / 54.2f;
+			Options_ArrowAngle = (Options_ArrowAngle += 768) % 65535;
 		}
 	}
 
