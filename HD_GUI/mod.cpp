@@ -413,12 +413,6 @@ extern "C"
 		ReplacePNG_StageJ("T_EGGCARRIER");
 		ReplacePNG_StageJ("T_MISTICRUIN");
 		ReplacePNG_StageJ("T_STATIONSQUARE");
-		// Screen fade fixes
-		f480_Fixed = 1.0f + VerticalResolution;
-		f640_Fixed = 1.0f + HorizontalResolution;
-		WriteData((float**)0x00433385, &f480_Fixed); // Screen fade resolution
-		WriteData((float**)0x004333A6, &f640_Fixed); // Screen fade resolution
-		WriteCall((void*)0x0042BF52, ScreenFadeFix);
 		// Character select screen fixes
 		WriteCall((void*)0x00511AD0, RetrievePlayerSelectStuff); // Player select text in character select screen
 		WriteCall((void*)0x00511C76, RetrieveBottomThingStuff); // Bottom thing in character select screen
