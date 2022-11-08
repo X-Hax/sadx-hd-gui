@@ -188,7 +188,7 @@ extern "C"
 		// Fix random ring icon
 		WriteData((NJS_TEXANIM**)0x004C03FF, &RandomRingIconPart_TEXANIM);
 		// Various fixes
-		WriteData<1>((char*)0x913122, 0x45); // Offset sprite UV for the Adventure Field ring count to fix artifacts
+		WriteData<1>((char*)0x913122, 0x48); // Offset sprite UV for the Adventure Field ring count to fix artifacts
 		WriteCall((void*)0x00457F2F, DrawSprite_Hook);
 		WriteCall((void*)0x00504DC4, HelpAvaSquareThing);
 		WriteCall((void*)0x0050717E, ScaleCharselJapaneseText_LikeSeriouslyWTF);
