@@ -10,10 +10,10 @@ Alternatively you could install HD GUI 2 manually by downloading the latest buil
 
 **Related mods:**
 
-Dreamcast Conversion: https://github.com/PiKeyAr/sadx_dreamcast
+Dreamcast Conversion: https://gitlab.com/PiKeyAr/sadx_dreamcast
 
-Dreamcast DLCs: https://github.com/PiKeyAr/sadx-dreamcast-dlc
+Dreamcast DLC: https://gitlab.com/PiKeyAr/sadx-dreamcast-dlc
 
-Sound Overhaul: https://github.com/PiKeyAr/sadx-sound-overhaul
+Sound Overhaul: https://gitlab.com/PiKeyAr/sadx-sound-overhaul
 
-Time of Day: https://github.com/PiKeyAr/sadx-timeofday-mod
+Time of Day: https://gitlab.com/PiKeyAr/sadx-timeofday-mod
