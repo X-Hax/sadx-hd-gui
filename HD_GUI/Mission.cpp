@@ -1,5 +1,9 @@
 #include <SADXModLoader.h>
 #include "Common.h"
+#include "FunctionHook.h"
+
+VoidFunc(DrawMiClearStatus, 0x590690);
+FunctionPointer(Sint32, ReleaseMiClearStatus, (), 0x00590660);
 
 #define ReplacePNG_MissionE(a) do { \
 	_snprintf_s(pathbuf, LengthOfArray(pathbuf), "%s\\textures\\pvr_mission_en\\index.txt", path); \
@@ -21,8 +25,38 @@
 	helperFunctions.ReplaceFile("system\\" a ".PVR", pathbuf); \
 } while (0)
 
+
+FunctionHook<void> DrawMiClearStatus_h(DrawMiClearStatus);
+FunctionHook<Sint32> ReleaseMiClearStatus_h(ReleaseMiClearStatus);
+
+static void __cdecl DrawMiClearStatus_r()
+{
+	// Draw AVA_BACK background
+	DrawSkyBg(1.1f);
+	DrawMiClearStatus_h.Original();
+}
+
+static Sint32 __cdecl ReleaseMiClearStatus_r()
+{
+	late_ReleaseTexture(&ava_back_TEXLIST);
+	return ReleaseMiClearStatus_h.Original();
+}
+
+void LoadAvaBackForMission()
+{
+	texLoadTexturePvmFile("AVA_BACK", &ava_back_TEXLIST);
+}
+
+void ReleaseAvaBackForMission()
+{
+	late_ReleaseTexture(&MIS_C_TEXLIST);
+}
+
 void Mission_Init(const char* path, const HelperFunctions & helperFunctions)
 {
+	DrawMiClearStatus_h.Hook(DrawMiClearStatus_r);
+	WriteCall((void*)0x00590E87, LoadAvaBackForMission);
+	WriteCall((void*)0x0040C99E, ReleaseAvaBackForMission);
 	char pathbuf[MAX_PATH];
 	HMODULE GoalRing = GetModuleHandle(L"GoalRing");
 	// English mission PVRs
