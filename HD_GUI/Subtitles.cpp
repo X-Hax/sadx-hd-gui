@@ -669,14 +669,14 @@ static void __cdecl SkyChaseInit_r()
 	LoadPVM("SUBTITLE_JP", &SubtitleJPTexlist);
 }
 
-static void UnlockEmblemCountShitr(ObjectMaster* a1);
-static Trampoline UnlockEmblemCountShitt(0x4B55B0, 0x4B55B6, UnlockEmblemCountShitr);
-static void __cdecl UnlockEmblemCountShitr(ObjectMaster* a1)
+static ObjectMaster* UnlockEmblemCountShitr();
+static Trampoline UnlockEmblemCountShitt(0x4B5800, 0x4B5805, UnlockEmblemCountShitr);
+static ObjectMaster* __cdecl UnlockEmblemCountShitr()
 {
 	auto original = reinterpret_cast<decltype(UnlockEmblemCountShitr)*>(UnlockEmblemCountShitt.Target());
-	original(a1);
 	LoadPVM("SUBTITLE", &SubtitleTexlist);
 	LoadPVM("SUBTITLE_JP", &SubtitleJPTexlist);
+	return original();
 }
 
 void MissionStop()
