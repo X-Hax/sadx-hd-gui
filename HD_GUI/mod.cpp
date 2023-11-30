@@ -201,6 +201,8 @@ extern "C"
 		WriteData<1>((char*)0x0091C022, 0i8); // You win/lose text alignment
 		WriteData<1>((char*)0x0091C034, 0i8); // You win/lose text alignment
 		WriteData<1>((char*)0x0091C048, 0i8); // You win/lose text alignment
+		WriteData((float*)0x006415DA, 1.5f); // EngBG X scale (DC images are smaller so they're scaled up a bit)
+		WriteData((float*)0x006415DF, 1.5f); // EngBG Y scale
 		// Texture replacements
 		ReplacePVMX("ENDBG_AMY_0");
 		ReplacePVMX("ENDBG_AMY_1");
