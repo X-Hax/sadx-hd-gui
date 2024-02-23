@@ -5,6 +5,8 @@
 #include <IniFile.hpp>
 #include "Common.h"
 
+const HelperFunctions* helperFunctionsGlobal;
+
 NJS_TEXNAME textures_obj_regular[100];
 NJS_TEXLIST texlist_obj_regular = { arrayptrandlength(textures_obj_regular) };
 
@@ -163,17 +165,19 @@ void DrawChnamBShit(Uint8 index)
 extern "C"
 {
 	__declspec(dllexport) ModInfo SADXModInfo = { ModLoaderVer };
+
 	__declspec(dllexport) void __cdecl Init(const char *path, const HelperFunctions &helperFunctions)
 	{
 		char pathbuf[MAX_PATH];
 		// Warnings
-		if (helperFunctions.Version < 20)
+		if (helperFunctions.Version < 21)
 		{
 			MessageBox(WindowHandle,
-				L"Please update the Mod Loader. HD GUI requires API version 20 or newer.",
+				L"Please update the Mod Loader. HD GUI requires API version 21 or newer.",
 				L"HD GUI error: Mod Loader out of date", MB_OK | MB_ICONERROR);
 			return;
 		}
+		helperFunctionsGlobal = &helperFunctions;
 		TitleScreen_Init();
 		GameGear_Init();
 		Subtitles_Init(path, helperFunctions);
@@ -442,6 +446,11 @@ extern "C"
 		ava_title_e_TEXLIST = ava_title_e_hd_texlist; // Added Internet option
 		ava_title_cmn_TEXLIST = ava_title_cmn_hd_texlist;
 		WriteCall((void*)0x005092A1, FileIcon_Hook); // File icon
+	}
+
+	__declspec(dllexport) void __cdecl OnInitGameLoop()
+	{
+		LoadSubtitleFont();
 	}
 
 	__declspec(dllexport) void __cdecl OnFrame()

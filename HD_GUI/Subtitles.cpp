@@ -2,10 +2,10 @@
 #include <IniFile.hpp>
 #include <Trampoline.cpp>
 #include "Subtitles.h"
+#include "Common.h"
 
 FunctionPointer(void, DrawFileSelectWindows, (float pos_x, float pos_y, float pos_z, float width, float height), 0x4343E0);
 DataPointer(float, MissionTextAlpha, 0x3C8307C);
-const HelperFunctions* helperFunctionsGlobal;
 
 static float RecapScreenY = 0;
 static int NumberOfTextLines = 0;
@@ -22,7 +22,6 @@ static int RecapFontColorG = 255;
 static int RecapFontColorB = 255;
 static float RecapSpacing = 5.0f;
 static float SubtitleSpacing = 6.0f;
-static bool SubtitleFontLoaded = false;
 
 static FontOffset JapaneseCharacterData = { 60, 0, 0 };
 static FontOffset JapaneseSpaceCharacterData = { 32, 0, 0 };
@@ -663,23 +662,17 @@ void MissionWindowHook(float pos_x, float pos_y, float pos_z, float width, float
 	MissionScreenScale = pos_y+height;
 }
 
-void LoadSubtitleFont(HelperFunctions helperFunctions)
+void LoadSubtitleFont()
 {
-	if (!SubtitleFontLoaded)
-	{
-		LoadPVM("SUBTITLE", &SubtitleTexlist);
-		LoadPVM("SUBTITLE_JP", &SubtitleJPTexlist);
-		helperFunctionsGlobal->RegisterPermanentTexlist(&SubtitleTexlist);
-		helperFunctionsGlobal->RegisterPermanentTexlist(&SubtitleJPTexlist);
-		SubtitleFontLoaded = true;
-	}
+	LoadPVM("SUBTITLE", &SubtitleTexlist);
+	LoadPVM("SUBTITLE_JP", &SubtitleJPTexlist);
+	helperFunctionsGlobal->RegisterPermanentTexlist(&SubtitleTexlist);
+	helperFunctionsGlobal->RegisterPermanentTexlist(&SubtitleJPTexlist);
 }
 
 void Subtitles_Init(const char* path, const HelperFunctions& helperFunctions)
 {
-	helperFunctionsGlobal = &helperFunctions;
 	// Subtitle hooks
-	WriteCall((void*)0x4209A4, LoadSubtitleFont);
 	WriteCall((void*)0x6431D3, MissionWindowHook);
 	// Disable all the stuff that sets up the "Now saving" text but nothing else
 	WriteData<5>((char*)0x40BE6C, 0x90);
