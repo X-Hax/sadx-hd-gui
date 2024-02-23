@@ -5,6 +5,7 @@
 
 FunctionPointer(void, DrawFileSelectWindows, (float pos_x, float pos_y, float pos_z, float width, float height), 0x4343E0);
 DataPointer(float, MissionTextAlpha, 0x3C8307C);
+const HelperFunctions* helperFunctionsGlobal;
 
 static float RecapScreenY = 0;
 static int NumberOfTextLines = 0;
@@ -21,6 +22,7 @@ static int RecapFontColorG = 255;
 static int RecapFontColorB = 255;
 static float RecapSpacing = 5.0f;
 static float SubtitleSpacing = 6.0f;
+static bool SubtitleFontLoaded = false;
 
 static FontOffset JapaneseCharacterData = { 60, 0, 0 };
 static FontOffset JapaneseSpaceCharacterData = { 32, 0, 0 };
@@ -309,12 +311,6 @@ static void __cdecl DisplayRecapThing_r(ObjectMaster* a1)
 	original(a1);
 	RecapScreenY = SubtitleEntity->Position.y;
 	//PrintDebug("Ass: %f and %f", SubtitleEntity->Position.x, SubtitleEntity->Position.y);
-}
-
-void LoadPVMHook_Tutorial()
-{
-	LoadPVM("SUBTITLE", &SubtitleTexlist);
-	LoadPVM("SUBTITLE_JP", &SubtitleJPTexlist);
 }
 
 void LoadFontdata(const IniFile* config)
@@ -652,33 +648,6 @@ void RecapStop(SubtitleThing* a1)
 	DoTextThing_Stop(a1);
 }
 
-void LoadPVMHook_Recap(const char* filename, NJS_TEXLIST* texlist)
-{
-	LoadPVM(filename, texlist);
-	LoadPVM("SUBTITLE", &SubtitleTexlist);
-	LoadPVM("SUBTITLE_JP", &SubtitleJPTexlist);
-}
-
-static void SkyChaseInit_r();
-static Trampoline SkyChaseInit_t(0x6281A0, 0x6281A7, SkyChaseInit_r);
-static void __cdecl SkyChaseInit_r()
-{
-	auto original = reinterpret_cast<decltype(SkyChaseInit_r)*>(SkyChaseInit_t.Target());
-	original();
-	LoadPVM("SUBTITLE", &SubtitleTexlist);
-	LoadPVM("SUBTITLE_JP", &SubtitleJPTexlist);
-}
-
-static ObjectMaster* UnlockEmblemCountShitr();
-static Trampoline UnlockEmblemCountShitt(0x4B5800, 0x4B5805, UnlockEmblemCountShitr);
-static ObjectMaster* __cdecl UnlockEmblemCountShitr()
-{
-	auto original = reinterpret_cast<decltype(UnlockEmblemCountShitr)*>(UnlockEmblemCountShitt.Target());
-	LoadPVM("SUBTITLE", &SubtitleTexlist);
-	LoadPVM("SUBTITLE_JP", &SubtitleJPTexlist);
-	return original();
-}
-
 void MissionStop()
 {
 	if (ListenToRecap != ListenToRecapMode::Done)
@@ -694,9 +663,23 @@ void MissionWindowHook(float pos_x, float pos_y, float pos_z, float width, float
 	MissionScreenScale = pos_y+height;
 }
 
+void LoadSubtitleFont(HelperFunctions helperFunctions)
+{
+	if (!SubtitleFontLoaded)
+	{
+		LoadPVM("SUBTITLE", &SubtitleTexlist);
+		LoadPVM("SUBTITLE_JP", &SubtitleJPTexlist);
+		helperFunctionsGlobal->RegisterPermanentTexlist(&SubtitleTexlist);
+		helperFunctionsGlobal->RegisterPermanentTexlist(&SubtitleJPTexlist);
+		SubtitleFontLoaded = true;
+	}
+}
+
 void Subtitles_Init(const char* path, const HelperFunctions& helperFunctions)
 {
+	helperFunctionsGlobal = &helperFunctions;
 	// Subtitle hooks
+	WriteCall((void*)0x4209A4, LoadSubtitleFont);
 	WriteCall((void*)0x6431D3, MissionWindowHook);
 	// Disable all the stuff that sets up the "Now saving" text but nothing else
 	WriteData<5>((char*)0x40BE6C, 0x90);
@@ -705,7 +688,6 @@ void Subtitles_Init(const char* path, const HelperFunctions& helperFunctions)
 	WriteData<5>((char*)0x40BEAB, 0x90);
 	WriteData<5>((char*)0x40BF27, 0x90);
 	WriteCall((void*)0x40D7DA, DrawSubtitleHook);
-	WriteCall((void*)0x643DBA, LoadPVMHook_Recap);
 	WriteCall((void*)0x642363, RecapStart);
 	WriteCall((void*)0x6423EE, RecapStop);
 	WriteCall((void*)0x642427, DrawRecapTextHook);
@@ -713,12 +695,8 @@ void Subtitles_Init(const char* path, const HelperFunctions& helperFunctions)
 	WriteCall((void*)0x642EF6, MissionStart);
 	WriteCall((void*)0x642F36, MissionStop);
 	WriteCall((void*)0x6430B2, DrawMissionTutorialTextHook);
-	WriteCall((void*)0x6421E7, LoadPVMHook_Tutorial);
-	// Add subtitle texlist to common object textures
-	helperFunctions.RegisterCommonObjectPVM(SubtitlePVMEntry);
-	helperFunctions.RegisterCommonObjectPVM(SubtitleJPPVMEntry);
 	// Blacklist subtitle global indices in mipmap generation to speed up loading
-	for (Uint32 i= 3489688888; i< 3489688932;i++)
+	for (Uint32 i = 3489688888; i < 3489688933;i++)
 		helperFunctions.MipmapBlacklistGBIX(i);
 	// Load fontdata settings
 	const std::string s_path(path);
