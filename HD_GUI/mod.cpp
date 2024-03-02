@@ -1,4 +1,4 @@
-#include <SADXModLoader.h>
+﻿#include <SADXModLoader.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <Trampoline.h>
@@ -450,12 +450,13 @@ extern "C"
 
 	__declspec(dllexport) void __cdecl OnInitGameLoop()
 	{
-		LoadSubtitleFont();
+		//LoadSubtitleFont();
+		LoadFont();
 	}
 
 	__declspec(dllexport) void __cdecl OnFrame()
 	{
-		Subtitles_OnFrame();
+		//Subtitles_OnFrame();
 		Tutorials_OnFrame();
 
 		if (GameMode == GameModes_Menu)
@@ -469,5 +470,10 @@ extern "C"
 	{
 		TitleScreen_OnReset();
 		GenerateGameGearBackground();
+	}
+
+	__declspec(dllexport) void __cdecl OnRenderSceneEnd()
+	{
+		//DrawSubtitleText();
 	}
 }

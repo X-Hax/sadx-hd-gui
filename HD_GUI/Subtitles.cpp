@@ -672,6 +672,7 @@ void LoadSubtitleFont()
 
 void Subtitles_Init(const char* path, const HelperFunctions& helperFunctions)
 {
+	return;
 	// Subtitle hooks
 	WriteCall((void*)0x6431D3, MissionWindowHook);
 	// Disable all the stuff that sets up the "Now saving" text but nothing else
