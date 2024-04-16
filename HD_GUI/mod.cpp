@@ -5,6 +5,8 @@
 #include <IniFile.hpp>
 #include "Common.h"
 
+bool SubtitlesHD = true;
+
 const HelperFunctions* helperFunctionsGlobal;
 
 NJS_TEXNAME textures_obj_regular[100];
@@ -169,6 +171,10 @@ extern "C"
 	__declspec(dllexport) void __cdecl Init(const char *path, const HelperFunctions &helperFunctions)
 	{
 		char pathbuf[MAX_PATH];
+		const std::string s_path(path);
+		const std::string s_config_ini(s_path + "\\config.ini");
+		const IniFile* const config = new IniFile(s_config_ini);
+		SubtitlesHD = config->getBool("General", "Subtitles", true);
 		// Warnings
 		if (helperFunctions.Version < 21)
 		{
@@ -180,7 +186,8 @@ extern "C"
 		helperFunctionsGlobal = &helperFunctions;
 		TitleScreen_Init();
 		GameGear_Init();
-		Subtitles_Init(path, helperFunctions);
+		if (SubtitlesHD)
+			Subtitles_Init(path, helperFunctions);
 		Tutorials_Init(path, helperFunctions);
 		Mission_Init(path, helperFunctions);
 		// Temporary hack until the new update for DC Conversion is released
@@ -261,6 +268,7 @@ extern "C"
 			//ReplacePVMX("AVA_TITLE_BACK"); - JP title screen, not used yet
 			ReplacePVMX("AVA_TITLE_BACK_E"); 
 			ReplacePVMX("AVA_GTITLE0_E");
+			ReplacePVMX("AVA_GTITLE0");
 		}
 		ReplacePVMX("AVA_TITLE");
 		ReplacePVMX("AVA_TITLE_E");
@@ -450,12 +458,14 @@ extern "C"
 
 	__declspec(dllexport) void __cdecl OnInitGameLoop()
 	{
-		LoadSubtitleFont();
+		if (SubtitlesHD)
+			LoadSubtitleFont();
 	}
 
 	__declspec(dllexport) void __cdecl OnFrame()
 	{
-		Subtitles_OnFrame();
+		if (SubtitlesHD)
+			Subtitles_OnFrame();
 		Tutorials_OnFrame();
 
 		if (GameMode == GameModes_Menu)
