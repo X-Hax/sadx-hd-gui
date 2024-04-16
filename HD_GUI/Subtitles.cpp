@@ -22,18 +22,32 @@ static int RecapFontColorG = 255;
 static int RecapFontColorB = 255;
 static float RecapSpacing = 5.0f;
 static float SubtitleSpacing = 6.0f;
+bool korean = false;
 
 static FontOffset JapaneseCharacterData = { 60, 0, 0 };
-static FontOffset JapaneseSpaceCharacterData = { 32, 0, 0 };
+static FontOffset KoreanCharacterData = { 60, 0, 0 };
+static FontOffset KoreanSpaceCharacterData = { 24, 0, 0 };
+static FontOffset JapaneseSpaceCharacterData = { 24, 0, 0 };
 
 bool IsJapaneseCharacter(unsigned __int16 character)
 {
-	return character > 0x8000;
+	if (!korean)
+		return character > 0x8000;
+	if (character > 0xFF)
+		return true;
+	return false;
 }
 
 FontOffset const& GetFontCharacterData(unsigned __int16 character)
 {
 	// force space width to 32 in Japanese
+	if (korean)
+	{
+		if (!TextLanguage && character == 0x20) return KoreanSpaceCharacterData;
+		else if (IsJapaneseCharacter(character)) return KoreanCharacterData;
+		else if (character == 0x02) return KoreanCharacterData;
+		else return FontCharacterData[character & 0xFF];
+	}
 	if (!TextLanguage && character == 0x20) return JapaneseSpaceCharacterData;
 	else if (IsJapaneseCharacter(character)) return JapaneseCharacterData;
 	else return FontCharacterData[character & 0xFF];
@@ -63,6 +77,14 @@ float CalculateSubtitleSpacing(unsigned __int16* array, int next_character_index
 
 int GetTexidForCodepage(unsigned __int16 character)
 {
+	if (korean)
+	{
+		//PrintDebug("Char: %X, %d\n", character, (character - 0xAC00) % 256);
+		if (character >= 0xAC00 && character <= 0xD7A3)
+			return (character - 0xAC00) / 256;
+		else
+			return 0;
+	}
 	for (unsigned int i = 0; i < LengthOfArray(JapaneseSubtitleCodepage); i++)
 	{
 		if (character >= JapaneseSubtitleCodepage[i].StartChar && character <= JapaneseSubtitleCodepage[i].StartChar + 255) return i;
@@ -82,10 +104,20 @@ void DrawCharacter(NJS_SPRITE* sprite, unsigned __int16 index, char mode, float 
 	float scale_y_bk = sprite->sy;
 	if (IsJapaneseCharacter(index))
 	{
-		sprite->p.x -= sprite->sx * 0.1f * 64;
-		sprite->p.y -= sprite->sy * 0.1f * 64;
-		sprite->sx *= 1.2f;
-		sprite->sy *= 1.1f;
+		if (korean)
+		{
+			sprite->p.x -= sprite->sx * 0.1f * 64;
+			sprite->p.y -= sprite->sy * 0.1f * 64;
+			//sprite->sx *= 1.2f;
+			//sprite->sy *= 1.2f;
+		}
+		else
+		{
+			sprite->p.x -= sprite->sx * 0.1f * 64;
+			sprite->p.y -= sprite->sy * 0.1f * 64;
+			sprite->sx *= 1.2f;
+			sprite->sy *= 1.2f;
+		}
 	}
 	int v2_bk = 0;
 	int uvdif = 0;
@@ -115,8 +147,15 @@ void DrawCharacter(NJS_SPRITE* sprite, unsigned __int16 index, char mode, float 
 	{
 		njSetTexture(&SubtitleJPTexlist);
 		sprite->tlist = &SubtitleJPTexlist;
-		if (index < 0x8140) character = 1;
-		else character = (index - 0x8140) % 256;
+		if (korean)
+		{
+			character = index % 256;
+		}
+		else
+		{
+			if (index < 0x8140) character = 1;
+			else character = (index - 0x8140) % 256;
+		}
 		texid = GetTexidForCodepage(index);
 	}
 	// English etc.
@@ -225,54 +264,84 @@ void ParseSubtitle(const char* string)
 	}
 	PrintDebug("Text string end\n");
 	*/
-	for (unsigned int i = 0; i < strlen(string); i++)
+	WCHAR str_conv[514];
+	if (korean)
 	{
-		// Here's a bunch of hardcoded Japanese characters because the game uses it in English too and because I'm tired of this shit
-		if (TextLanguage == 1 && string[i] == 0xFFFFFF81)
+		memset(str_conv, 0, 0x400u);
+		MultiByteToWideChar(949, 0, string, 0xFFFFFFFF, str_conv, strlen(string));
+		for (unsigned int i = 0; i < strlen(string); i++)
 		{
-			// Square
-			if (string[i + 1] == 0xFFFFFFA1)
+			character = str_conv[i];
+			//PrintDebug("%X ", character);
+			switch (character)
 			{
-				AddSubtitleCharacter(array, 0x01);
-			}
-			// ...
-			if (string[i + 1] == 0x63)
-			{
+			case 0x2026:
 				AddSubtitleCharacter(array, 0x2);
+				i++;
+				break;
+			case 0x300C: // Left bracket
+				AddSubtitleCharacter(array, 0x91);
+				break;
+			case 0x300D: // Right bracket
+				AddSubtitleCharacter(array, 0x93);
+				break;
+			default:
+				AddSubtitleCharacter(array, character);
+				break;
 			}
-			// '
-			if (string[i + 1] == 0x65)
-			{
-				AddSubtitleCharacter(array, 0x27);
-			}
-			// !
-			if (string[i + 1] == 0x49)
-			{
-				AddSubtitleCharacter(array, 0x21);
-			}
-			// ?
-			if (string[i + 1] == 0x48)
-			{
-				AddSubtitleCharacter(array, 0x3F);
-			}
-			// Skip the next character because it's zenkaku
-			AddSubtitleCharacter(array, 0x20);
-			i++;
 		}
-		// Read as zenkaku
-		else if (TextLanguage <= 1 && string[i] & 0xFFFFFF00)
+	}
+	else
+	{
+		for (unsigned int i = 0; i < strlen(string); i++)
 		{
-			character = 0x100 * (string[i] & 0xFF) + abs(string[i + 1] & 0xFF);
-			//PrintDebug("%X ", character);
-			i++;
-			AddSubtitleCharacter(array, character);
-		}
-		// Read as hankaku
-		else
-		{
-			character = string[i] & 0xFF;
-			//PrintDebug("%X ", character);
-			AddSubtitleCharacter(array, character);
+			// Here's a bunch of hardcoded Japanese characters because the game uses it in English too and because I'm tired of this shit
+			if (TextLanguage == 1 && string[i] == 0xFFFFFF81)
+			{
+				// Square
+				if (string[i + 1] == 0xFFFFFFA1)
+				{
+					AddSubtitleCharacter(array, 0x01);
+				}
+				// ...
+				if (string[i + 1] == 0x63)
+				{
+					AddSubtitleCharacter(array, 0x2);
+				}
+				// '
+				if (string[i + 1] == 0x65)
+				{
+					AddSubtitleCharacter(array, 0x27);
+				}
+				// !
+				if (string[i + 1] == 0x49)
+				{
+					AddSubtitleCharacter(array, 0x21);
+				}
+				// ?
+				if (string[i + 1] == 0x48)
+				{
+					AddSubtitleCharacter(array, 0x3F);
+				}
+				// Skip the next character because it's zenkaku
+				AddSubtitleCharacter(array, 0x20);
+				i++;
+			}
+			// Read as zenkaku
+			else if (TextLanguage <= 1 && string[i] & 0xFFFFFF00)
+			{
+				character = 0x100 * (string[i] & 0xFF) + abs(string[i + 1] & 0xFF);
+				//PrintDebug("%X ", character);
+				i++;
+				AddSubtitleCharacter(array, character);
+			}
+			// Read as hankaku
+			else
+			{
+				character = string[i] & 0xFF;
+				//PrintDebug("%X ", character);
+				AddSubtitleCharacter(array, character);
+			}
 		}
 	}
 	// Calculate recap line length
@@ -291,23 +360,19 @@ void ParseSubtitle(const char* string)
 	}
 }
 
-static void DisplaySubtitleThing_r(SubtitleThing* a1, const char* a2);
-static Trampoline DisplaySubtitleThing_t(0x40E570, 0x40E575, DisplaySubtitleThing_r);
+Trampoline* DisplaySubtitleThing_t = nullptr;
 static void __cdecl DisplaySubtitleThing_r(SubtitleThing* a1, const char* a2)
 {
-	auto original = reinterpret_cast<decltype(DisplaySubtitleThing_r)*>(DisplaySubtitleThing_t.Target());
-	original(a1, a2);
+	TARGET_DYNAMIC(DisplaySubtitleThing)(a1, a2);
 	//PrintDebug("Subtitle: %s\n", a2);
 	ParseSubtitle(a2);
 }
 
-static void DisplayRecapThing_r(ObjectMaster* a1);
-static Trampoline DisplayRecapThing_t(0x642300, 0x642306, DisplayRecapThing_r);
+Trampoline* DisplayRecapThing_t = nullptr;
 static void __cdecl DisplayRecapThing_r(ObjectMaster* a1)
 {
 	EntityData1* SubtitleEntity = a1->Data1;
-	auto original = reinterpret_cast<decltype(DisplayRecapThing_r)*>(DisplayRecapThing_t.Target());
-	original(a1);
+	TARGET_DYNAMIC(DisplayRecapThing)(a1);
 	RecapScreenY = SubtitleEntity->Position.y;
 	//PrintDebug("Ass: %f and %f", SubtitleEntity->Position.x, SubtitleEntity->Position.y);
 }
@@ -665,7 +730,7 @@ void MissionWindowHook(float pos_x, float pos_y, float pos_z, float width, float
 void LoadSubtitleFont()
 {
 	LoadPVM("SUBTITLE", &SubtitleTexlist);
-	LoadPVM("SUBTITLE_JP", &SubtitleJPTexlist);
+	LoadPVM(korean ? "SUBTITLE_KR" : "SUBTITLE_JP", &SubtitleJPTexlist);
 	helperFunctionsGlobal->RegisterPermanentTexlist(&SubtitleTexlist);
 	helperFunctionsGlobal->RegisterPermanentTexlist(&SubtitleJPTexlist);
 }
@@ -674,6 +739,8 @@ void Subtitles_Init(const char* path, const HelperFunctions& helperFunctions)
 {
 	// Subtitle hooks
 	WriteCall((void*)0x6431D3, MissionWindowHook);
+	DisplaySubtitleThing_t = new Trampoline(0x40E570, 0x40E575, DisplaySubtitleThing_r);
+	DisplayRecapThing_t = new Trampoline(0x642300, 0x642306, DisplayRecapThing_r);
 	// Disable all the stuff that sets up the "Now saving" text but nothing else
 	WriteData<5>((char*)0x40BE6C, 0x90);
 	WriteData<5>((char*)0x40BE92, 0x90);
@@ -697,6 +764,11 @@ void Subtitles_Init(const char* path, const HelperFunctions& helperFunctions)
 	const IniFile* const config = new IniFile(s_config_ini);
 	LoadFontdata(config);
 	delete config;
+	if (GetModuleHandle(L"sadx-korean-mod") != nullptr)
+	{
+		korean = true;
+		SubtitleJPTexlist.nbTexture = 44;
+	}
 }
 
 void Subtitles_OnFrame()
