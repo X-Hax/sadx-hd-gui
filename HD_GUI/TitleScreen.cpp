@@ -143,7 +143,7 @@ void DrawTitleScreenShit_cdecl(TitleScreenData* a1)
 			}
 		}
 		// Draw logo
-		njSetTexture(&ava_gtitle0_e_TEXLIST);
+		njSetTexture(TextLanguage ? &ava_gtitle0_e_TEXLIST : &TexList_Ava_Gtitle0);
 		xpos = center_x - (171.0f + logo_xoffset) * vscale;
 		ypos = center_y - 143.0f * vscale;
 		DrawBG(0, xpos, ypos, 1.1f, vscale * 0.5f, vscale * 0.5f);
@@ -186,9 +186,11 @@ void DrawTitleScreenShit_cdecl(TitleScreenData* a1)
 			xpos = center_x + 32.0f * vscale;
 			ypos = center_y + 84 * vscale;
 			njTextureShadingMode(1);
-			njSetTexture(&ava_gtitle0_e_TEXLIST);
+			njSetTexture(TextLanguage ? &ava_gtitle0_e_TEXLIST : &TexList_Ava_Gtitle0);
 			DrawBG(8, xpos, ypos, 1.1f, vscale * 0.5f, vscale * 0.5f);
 			DrawBG(9, xpos + 128.0f * vscale, ypos, 1.1f, vscale * 0.5f, vscale * 0.5f);
+			if (!TextLanguage)
+				DrawBG(10, xpos + 256.0f * vscale, ypos, 1.1f, vscale * 0.5f, vscale * 0.5f);
 			njTextureShadingMode(2);
 			SetVtxColorB(0xFFFFFFFF);
 		}
