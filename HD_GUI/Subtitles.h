@@ -585,7 +585,7 @@ static FontOffset FontCharacterData[] =
 NJS_TEXNAME SubtitleTexname[1];
 NJS_TEXLIST SubtitleTexlist = { arrayptrandlength(SubtitleTexname) };
 
-NJS_TEXNAME SubtitleJPTexname[43];
+NJS_TEXNAME SubtitleJPTexname[44];
 NJS_TEXLIST SubtitleJPTexlist = {arrayptrandlength(SubtitleJPTexname)};
 
 unsigned __int16 SubtitleArray[256];
