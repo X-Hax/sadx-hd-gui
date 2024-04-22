@@ -277,13 +277,18 @@ void ParseSubtitle(const char* string)
 			{
 			case 0x2026:
 				AddSubtitleCharacter(array, 0x2);
-				i++;
+				if (!MissionScreenState)
+					i++;
 				break;
 			case 0x300C: // Left bracket
 				AddSubtitleCharacter(array, 0x91);
+				if (!MissionScreenState)
+					i++;
 				break;
 			case 0x300D: // Right bracket
 				AddSubtitleCharacter(array, 0x93);
+				if (!MissionScreenState)
+					i++;
 				break;
 			default:
 				AddSubtitleCharacter(array, character);
